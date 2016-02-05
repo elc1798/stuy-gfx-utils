@@ -46,11 +46,14 @@ char *pic2string(pixel **pic, int XRES, int YRES, int MAX_COLOR_VAL) {
     sprintf(tmp, "\n%d %d %d\n", XRES, YRES, MAX_COLOR_VAL);
     strncat(buff, tmp, 64);
 
+    int curr = strlen(buff);
     int i, j;
+
     for (i = 0; i < XRES; i++) {
         for (j = 0; j < YRES; j++) {
             sprintf(tmp, "%d %d %d ", get_red(pic[i][j]), get_green(pic[i][j]), get_blue(pic[i][j]));
-            strncat(buff, tmp, 4 * 3);
+            strncpy(buff + curr, tmp, 4 * 3);
+            curr += strlen(tmp);
         }
     }
     free(tmp);
