@@ -52,3 +52,27 @@ filewrite(FILENAME, pic2string(pic, XRES, YRES, MAX_C_VAL), get_size_of_buff(XRE
 
 Replace the parameters as necessary.
 
+Now that we have a 2-D array of pixels, we can directly modify them like such
+```
+pic[a][b] = new_pixel(red_value, green_value, blue_value);
+```
+
+Where `a` and `b` are index values of the array, and the parameters of `new_pixel()` are integers between
+0 and 255.
+
+Here is the declaration from the header file:
+
+```
+int get_red(pixel p);
+int get_green(pixel p);
+int get_blue(pixel p);
+
+pixel new_pixel(int r, int g, int b);
+```
+
+The names are self explanatory. If you want to change the blue value of a pixel, set it to
+
+```
+new_pixel(get_red(p), get_green(p), new_blue_value);
+```
+
