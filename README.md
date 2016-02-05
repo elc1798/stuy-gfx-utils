@@ -52,6 +52,10 @@ filewrite(FILENAME, pic2string(pic, XRES, YRES, MAX_C_VAL), get_size_of_buff(XRE
 
 Replace the parameters as necessary.
 
+Note that `pic2string` returns a `malloc` allocated memory chunk. You might want
+to store that in a variable like `char *s` so you can `free` the memory
+afterwards.
+
 Now that we have a 2-D array of pixels, we can directly modify them like such
 ```
 pic[a][b] = new_pixel(red_value, green_value, blue_value);

@@ -27,8 +27,13 @@ int main() {
     }
     // Fill entire image with red
     fill_rect(pic, 255, 0, 0, 0, 0, XRES, YRES);
-    filewrite(FILENAME, pic2string(pic, XRES, YRES, MAX_C_VAL), get_size_of_buff(XRES, YRES, MAX_C_VAL));
+    char *s = pic2string(pic, XRES, YRES, MAX_C_VAL);
+    filewrite(FILENAME, s, get_size_of_buff(XRES, YRES, MAX_C_VAL));
+
     // Free the memory
+    free(s);
+    s = NULL;
+
     for (i = 0; i < XRES; i++) {
         free(pic[i]);
         pic[i] = NULL;
