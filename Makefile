@@ -6,3 +6,9 @@ netpbm:
 
 fout:
 	gcc -c gfx_utils/fout.c -o gfx_utils/fout.o
+
+clean:
+	rm -f gfx_utils/netpbm.o
+	rm -f gfx_utils/fout.o
+	rm -f *.ppm
+	rm -f *.out
