@@ -1,5 +1,5 @@
 all: netpbm fout
-	gcc example.c gfx_utils/netpbm.o gfx_utils/fout.o -I gfx_utils/ -o example.out
+	gcc picmaker.c gfx_utils/netpbm.o gfx_utils/fout.o -I gfx_utils/ -o picmaker.out
 
 netpbm:
 	gcc -c gfx_utils/netpbm.c -o gfx_utils/netpbm.o
@@ -12,3 +12,6 @@ clean:
 	rm -f gfx_utils/fout.o
 	rm -f *.ppm
 	rm -f *.out
+
+run: picmaker.out
+	./picmaker.out
