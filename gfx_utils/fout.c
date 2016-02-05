@@ -25,25 +25,25 @@ int charlen_of_int(int i) {
     return len;
 }
 
-int get_size_of_buff(pixel pic[512][512], int XRES, int YRES) {
+int get_size_of_buff(int XRES, int YRES, int MAX_COLOR_VAL) {
     // Explicitly stating the required size of the buffer for clarity
     int size = 0;
-    size += 3;                          // 'P3' header + space
-    size += charlen_of_int(XRES) + 1;   // x resolution + space
-    size += charlen_of_int(YRES) + 1;   // y resolution + space
-    size += 4 * 3 * XRES * YRES;        // length 3 numbers + space for every pixel
+    size += 3;                                  // 'P3' header + space
+    size += charlen_of_int(XRES) + 1;           // x resolution + space
+    size += charlen_of_int(YRES) + 1;           // y resolution + space
+    size += charlen_of_int(MAX_COLOR_VAL) + 1;  // max color value + space
+    size += 4 * 3 * XRES * YRES;                // length 3 numbers + space for every pixel
     return size;
 }
 
-char *pic2string(pixel pic[512][512], int XRES, int YRES) {
-    int size = get_size_of_buff(pic, XRES, YRES);
+char *pic2string(pixel **pic, int XRES, int YRES, int MAX_COLOR_VAL) {
+    int size = get_size_of_buff(XRES, YRES, MAX_COLOR_VAL);
     char *buff = malloc(size * sizeof(char));
     char *tmp = malloc(64 * sizeof(char));
 
     strncat(buff, PPM_HEADER, 2);
-    strncat(buff, " ", 1);
 
-    sprintf(tmp, "%d %d\n", XRES, YRES);
+    sprintf(tmp, "\n%d %d %d\n", XRES, YRES, MAX_COLOR_VAL);
     strncat(buff, tmp, 64);
 
     int i, j;
