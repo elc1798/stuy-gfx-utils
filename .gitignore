@@ -33,3 +33,6 @@
 
 # Generated files
 *.ppm
+
+# Dammit Mac OSX
+.DS_Store
