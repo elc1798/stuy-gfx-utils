@@ -61,8 +61,13 @@ int main() {
                 params[3] % XRES, params[4] % YRES, 60 + (params[5] % 241), 60 + (params[6] % 241));
     }
 
-    filewrite(FILENAME, pic2string(pic, XRES, YRES, MAX_C_VAL), get_size_of_buff(XRES, YRES, MAX_C_VAL));
+    char *s = pic2string(pic, XRES, YRES, MAX_C_VAL);
+    filewrite(FILENAME, s, get_size_of_buff(XRES, YRES, MAX_C_VAL));
+
     // Free the memory
+    free(s);
+    s = NULL;
+
     for (i = 0; i < XRES; i++) {
         free(pic[i]);
         pic[i] = NULL;
