@@ -27,15 +27,3 @@ pixel new_pixel(int r, int g, int b) {
     return retval | ((r & BIT_MASK) << RED_SHIFT) | ((g & BIT_MASK) << GREEN_SHIFT) | ((b & BIT_MASK) << BLUE_SHIFT);
 }
 
-void set_red(pixel *p, int r) {
-    *p = *p ^ ((r & BIT_MASK) << RED_SHIFT);
-}
-
-void set_green(pixel *p, int g) {
-    *p = *p ^ ((g & BIT_MASK) << GREEN_SHIFT);
-}
-
-void set_blue(pixel *p, int b) {
-    *p = *p ^ ((b & BIT_MASK) << BLUE_SHIFT);
-}
-
