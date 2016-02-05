@@ -33,7 +33,7 @@ int i; for (i = 0; i < XRES; i++) {
 }
 ```
 
-Because we are using pointers, it is good practice to `free` this memory after we are done using it:
+Because we are using `malloc`, it is good practice to `free` this memory after we are done using it:
 
 ```
 for (i = 0; i < XRES; i++) {
