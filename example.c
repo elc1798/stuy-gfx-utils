@@ -11,8 +11,8 @@
 
 void fill_rect(pixel **pic, int r, int g, int b, int x, int y, int dx, int dy) {
     int i,j;
-    for (i = x; i < dx; i++) {
-        for (j = y; j < dy; j++) {
+    for (i = x; i < x + dx; i++) {
+        for (j = y; j < y + dy; j++) {
             pic[i][j] = new_pixel(r, g, b);
         }
     }
