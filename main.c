@@ -3,20 +3,12 @@
 
 #include "gfx_utils/fout.h"
 #include "gfx_utils/netpbm.h"
+#include "gfx_utils/draw.h"
 
 #define FILENAME    "pic1.ppm"
 #define XRES        512
 #define YRES        512
 #define MAX_C_VAL   255
-
-void fill_rect(pixel **pic, int r, int g, int b, int x, int y, int dx, int dy) {
-    int i,j;
-    for (i = x; i < x + dx; i++) {
-        for (j = y; j < y + dy; j++) {
-            pic[i][j] = new_pixel(r, g, b);
-        }
-    }
-}
 
 int main() {
     // An image is of type pixel**
