@@ -1,29 +1,64 @@
-#include "gfx_utils/fout.h"
-#include "gfx_utils/netpbm.h"
-#include "gfx_utils/draw.h"
+#include "fout.h"
+#include "netpbm.h"
+#include "draw.h"
+
+void plot(pixel **pic, pixel p, int x, int y) {
+    pic[y][x] = p;
+}
 
 // Simple rectangular fill algorithm
-void fill_rect(pixel **pic, int r, int g, int b, int x, int y, int dx, int dy) {
-    int i,j;
+void fill_rect(pixel **pic, pixel p, int x, int y, int dx, int dy) {
+    int i, j;
     for (i = x; i < x + dx; i++) {
         for (j = y; j < y + dy; j++) {
-            pic[i][j] = new_pixel(r, g, b);
+            plot(pic, p, i, j);
         }
     }
 }
 
 // Implementation of Bresenham's line algorithm
-void draw_line(pixel **pic, int r, int g, int b, int x0, int y0, int x1, int y1) {
-    // Determine the octant without using divide
-    int octant = -1;
-    if (x1 - x0 > 0 && y1 - y0 > 0) {
-        octant = (y1 - y0 > x1 - x0) ? 2 : 1;
-    } else if (x1 - x0 < 0 && y1 - y0 > 0) {
-        octant = (y1 - y0 > x0 - x1) ? 3 : 4;
-    } else if (x1 - x0 < 0 && y1 - y0 < 0) {
-        octant = (y0 - y1 > x0 - x1) ? 6 : 5;
-    } else if (x0 - x1 > 0 && y1 - y0 < 0) {
-        octant = (y0 - y1 > x1 - x0) ? 7 : 8;
+void draw_line(pixel **pic, pixel p, int x0, int y0, int x1, int y1) {
+    int x_c, y_c, inc;
+    // Draw special cases first
+    if (y0 == y1) { // Horizontal
+        x_c = x0;
+        inc = (x1 - x0 < 0) ? -1 : 1;
+        while (x_c != x1) {
+            plot(pic, p, x_c, y0);
+            x_c += inc;
+        }
+        plot(pic, p, x1, y0);
+        return;
+    }
+    if (x0 == x1) { // Vertical
+        y_c = y0;
+        inc = (y1 - y0 < 0) ? -1 : 1;
+        while (y_c != y1) {
+            plot(pic, p, x0, y_c);
+            y_c += inc;
+        }
+        plot(pic, p, x0, y1);
+        return;
+    }
+    if (y1 - y0 == x1 - x0) { // y = x
+        x_c = x0;
+        y_c = y0;
+        inc = (y1 - y0 < 0) ? -1 : 1;
+        while (x_c != x1) {
+            plot(pic, p, x_c, y_c);
+            x_c += inc;
+            y_c += inc;
+        }
+    }
+    if (y1 - y0 == -1 * (x1 - x0)) { // y = -x
+        x_c = x0;
+        y_c = y0;
+        inc = (y1 - y0 < 0) ? -1 : 1;
+        while (x_c != x1) {
+            plot(pic, p, x_c, y_c);
+            x_c -= inc;
+            y_c += inc;
+        }
     }
 }
 
