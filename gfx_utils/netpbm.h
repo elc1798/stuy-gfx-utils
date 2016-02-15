@@ -10,5 +10,7 @@ int get_green(pixel p);
 int get_blue(pixel p);
 
 pixel new_pixel(int r, int g, int b);
+pixel **new_picture(int xres, int yres);
+void free_picture(pixel **pic, int yres);
 
 #endif

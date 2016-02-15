@@ -12,13 +12,32 @@
 
 int main() {
     // An image is of type pixel**
-    pixel **pic;
-    pic = malloc(XRES * sizeof(pixel*));
-    int i; for (i = 0; i < XRES; i++) {
-        pic[i] = malloc(YRES * sizeof(pixel));
+    pixel **pic = new_picture(XRES, YRES);
+
+    // Fill entire image a white background
+    fill_rect(pic, new_pixel(255, 255, 255), 0, 0, XRES, YRES);
+
+    // Draw blue horizontal lines to test
+    int i; for (i = 0; i < XRES; i += 5) {
+        draw_line(pic, new_pixel(0, 0, 255), 0, i, i, i);
     }
-    // Fill entire image with red
-    fill_rect(pic, 255, 0, 0, 0, 0, XRES, YRES);
+
+    // Draw red vertical lines to test
+    for (i = 0; i < YRES; i += 5) {
+        draw_line(pic, new_pixel(255, 0, 0), i, 0, i, i);
+    }
+
+    // Draw some diagonal parallel to y = x
+    for (i = 0; i < XRES; i += 10) {
+        draw_line(pic, new_pixel(0, 255, 0), 0, i, XRES - i, 0);
+    }
+
+    // Draw some diagonal parallel to y = -x
+    for (i = 0; i < XRES; i += 10) {
+        draw_line(pic, new_pixel(0, 0, 0), 0, i, i, 0);
+    }
+
+    // Write it out to an image
     char *s = pic2string(pic, XRES, YRES, MAX_C_VAL);
     filewrite(FILENAME, s, get_size_of_buff(XRES, YRES, MAX_C_VAL));
 
@@ -26,11 +45,7 @@ int main() {
     free(s);
     s = NULL;
 
-    for (i = 0; i < XRES; i++) {
-        free(pic[i]);
-        pic[i] = NULL;
-    }
-    free(pic);
+    free_picture(pic, YRES);
     pic = NULL;
     return 0;
 }

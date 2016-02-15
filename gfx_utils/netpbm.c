@@ -27,3 +27,20 @@ pixel new_pixel(int r, int g, int b) {
     return retval | ((r & BIT_MASK) << RED_SHIFT) | ((g & BIT_MASK) << GREEN_SHIFT) | ((b & BIT_MASK) << BLUE_SHIFT);
 }
 
+pixel **new_picture(int xres, int yres) {
+    pixel **pic;
+    pic = malloc(yres * sizeof(pixel*));
+    int i; for (i = 0; i < xres; i++) {
+        pic[i] = malloc(xres * sizeof(pixel));
+    }
+    return pic;
+}
+
+void free_picture(pixel **pic, int yres) {
+    int i; for (i = 0; i < yres; i++) {
+        free(pic[i]);
+        pic[i] = NULL;
+    }
+    free(pic);
+}
+
