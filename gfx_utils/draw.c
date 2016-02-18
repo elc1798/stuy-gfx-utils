@@ -6,63 +6,149 @@
 #include "netpbm.h"
 #include "draw.h"
 
-void plot(pixel **pic, pixel p, int x, int y) {
-    pic[y][x] = p;
+extern int XRES;
+extern int YRES;
+extern int MAX_C_VAL;
+
+void plot(pixel **pic, pixel pix, point p) {
+    if (p.x < 0 || p.y < 0 || p.x >= XRES || p.y >= YRES) {
+        return;
+    }
+    pic[YRES - p.y - 1][p.x] = pix;
 }
 
 // Simple rectangular fill algorithm
-void fill_rect(pixel **pic, pixel p, int x, int y, int dx, int dy) {
+void fill_rect(pixel **pic, pixel pix, point p1, point p2) {
     int i, j;
-    for (i = x; i < x + dx; i++) {
-        for (j = y; j < y + dy; j++) {
-            plot(pic, p, i, j);
+    for (i = p1.x; i < p1.x + p2.x; i++) {
+        for (j = p1.y; j < p1.y + p2.y; j++) {
+            plot(pic, pix, new_point(i, j));
         }
     }
 }
 
+point convert_to_octant_1(point p, int octant) {
+    point retval;
+    switch (octant) {
+        case 1:
+            retval.x = p.x;
+            retval.y = p.y;
+            break;
+        case 2:
+            retval.x = p.y;
+            retval.y = p.x;
+            break;
+        case 3:
+            retval.x = p.y;
+            retval.y = -p.x;
+            break;
+        case 4:
+            retval.x = -p.x;
+            retval.y = p.y;
+            break;
+        case 5:
+            retval.x = -p.x;
+            retval.y = -p.y;
+            break;
+        case 6:
+            retval.x = -p.y;
+            retval.y = -p.x;
+            break;
+        case 7:
+            retval.x = -p.y;
+            retval.y = p.x;
+            break;
+        case 8:
+            retval.x = p.x;
+            retval.y = -p.y;
+        default:
+            printf("Unknown octant provided : %d\n", octant);
+            exit(-1);
+    }
+    return retval;
+}
+
+point convert_from_octant_1(point p, int octant) {
+    point retval;
+    switch (octant) {
+        case 1:
+            retval.x = p.x;
+            retval.y = p.y;
+            break;
+        case 2:
+            retval.x = p.y;
+            retval.y = p.x;
+            break;
+        case 3:
+            retval.x = -p.y;
+            retval.y = p.x;
+            break;
+        case 4:
+            retval.x = -p.x;
+            retval.y = p.y;
+            break;
+        case 5:
+            retval.x = -p.x;
+            retval.y = -p.y;
+            break;
+        case 6:
+            retval.x = -p.y;
+            retval.y = -p.x;
+            break;
+        case 7:
+            retval.x = p.y;
+            retval.y = -p.x;
+            break;
+        case 8:
+            retval.x = p.x;
+            retval.y = -p.y;
+        default:
+            printf("Unknown octant provided : %d\n", octant);
+            exit(-1);
+    }
+    return retval;
+}
+
+int get_octant(point initial, point final) {
+    int rise = final.y - initial.y;
+    int run = final.x - initial.x;
+    bool mirror = false;
+    int octant = 0;
+    if (run < 0) {
+        rise *= -1;
+        run *= -1;
+        mirror = true;
+    }
+    if (rise >= 0) {
+        octant = (rise > run) ? 2 : 1;
+    } else {
+        octant = (-rise > run) ? 3 : 4;
+    }
+    if (mirror) {
+        octant = ((octant - 1 + 4) % 8) + 1;
+    }
+    return octant;
+}
+
 // Implementation of Bresenham's line algorithm
-void draw_line(pixel **pic, pixel p, int x0, int y0, int x1, int y1) {
-    int x_c, y_c, inc;
-    // Draw special cases first
-    if (y0 == y1) { // Horizontal
-        x_c = x0;
-        inc = (x1 - x0 < 0) ? -1 : 1;
-        while (x_c != x1) {
-            plot(pic, p, x_c, y0);
-            x_c += inc;
+void draw_line(pixel **pic, pixel pix, point p1, point p2) {
+    int octant = get_octant(p1, p2);
+
+    point p1_converted = convert_to_octant_1(p1, octant);
+    point p2_converted = convert_to_octant_1(p2, octant);
+    int x = p1.x;
+    int y = p1.y;
+    int A = p2.y - p1.y;
+    int B = -(p2.x - p2.x);
+    int d = 2 * A + B;
+    while (x <= p2.x) {
+        plot(pic, pix, convert_from_octant_1(new_point(x, y), octant));
+        if (d > 0) {
+            y += 1;
+            d += 2 * B;
         }
-        plot(pic, p, x1, y0);
-        return;
-    }
-    if (x0 == x1) { // Vertical
-        y_c = y0;
-        inc = (y1 - y0 < 0) ? -1 : 1;
-        while (y_c != y1) {
-            plot(pic, p, x0, y_c);
-            y_c += inc;
-        }
-        plot(pic, p, x0, y1);
-        return;
-    }
-    if (y1 - y0 == x1 - x0) { // y = x
-        x_c = x0;
-        y_c = y0;
-        inc = (y1 - y0 < 0) ? -1 : 1;
-        while (x_c != x1) {
-            plot(pic, p, x_c, y_c);
-            x_c += inc;
-            y_c += inc;
-        }
-    }
-    if (y1 - y0 == -1 * (x1 - x0)) { // y = -x
-        x_c = x0;
-        y_c = y0;
-        inc = (y1 - y0 < 0) ? -1 : 1;
-        while (x_c != x1) {
-            plot(pic, p, x_c, y_c);
-            x_c -= inc;
-            y_c += inc;
-        }
+        x += 1;
+        d += 2 * A;
     }
 }
 
