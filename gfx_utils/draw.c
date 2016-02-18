@@ -1,3 +1,7 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+
 #include "fout.h"
 #include "netpbm.h"
 #include "draw.h"
