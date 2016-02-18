@@ -3,9 +3,9 @@
 
 #include "netpbm.h"
 
-void plot(pixel **pic, pixel p, int x, int y);
-void fill_rect(pixel **pic, pixel p, int x, int y, int dx, int dy);
-void draw_line(pixel **pic, pixel p, int x0, int y0, int x1, int y1);
+void plot(pixel **pic, pixel pix, point p);
+void fill_rect(pixel **pic, pixel pix, point p1, point p2);
+void draw_line(pixel **pic, pixel pix, point p1, point p2);
 
 #endif
 
