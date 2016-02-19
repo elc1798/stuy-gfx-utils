@@ -20,8 +20,8 @@ void plot(pixel **pic, pixel pix, point p) {
 // Simple rectangular fill algorithm
 void fill_rect(pixel **pic, pixel pix, point p1, point p2) {
     int i, j;
-    for (i = p1.x; i < p1.x + p2.x; i++) {
-        for (j = p1.y; j < p1.y + p2.y; j++) {
+    for (i = p1.x; i < p2.x; i++) {
+        for (j = p1.y; j < p2.y; j++) {
             plot(pic, pix, new_point(i, j));
         }
     }
@@ -61,6 +61,7 @@ point convert_to_octant_1(point p, int octant) {
         case 8:
             retval.x = p.x;
             retval.y = -p.y;
+            break;
         default:
             printf("Unknown octant provided : %d\n", octant);
             exit(-1);
@@ -102,6 +103,7 @@ point convert_from_octant_1(point p, int octant) {
         case 8:
             retval.x = p.x;
             retval.y = -p.y;
+            break;
         default:
             printf("Unknown octant provided : %d\n", octant);
             exit(-1);
@@ -136,12 +138,12 @@ void draw_line(pixel **pic, pixel pix, point p1, point p2) {
 
     point p1_converted = convert_to_octant_1(p1, octant);
     point p2_converted = convert_to_octant_1(p2, octant);
-    int x = p1.x;
-    int y = p1.y;
-    int A = p2.y - p1.y;
-    int B = -(p2.x - p2.x);
+    int x = p1_converted.x;
+    int y = p1_converted.y;
+    int A = p2_converted.y - p1_converted.y;
+    int B = -(p2_converted.x - p1_converted.x);
     int d = 2 * A + B;
-    while (x <= p2.x) {
+    while (x <= p2_converted.x) {
         plot(pic, pix, convert_from_octant_1(new_point(x, y), octant));
         if (d > 0) {
             y += 1;

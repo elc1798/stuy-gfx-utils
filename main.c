@@ -33,18 +33,20 @@ int main() {
     }
 
     // Draw red vertical lines to test
+    printf("Drawing red vertical lines to test\n");
     for (i = 0; i < YRES; i += 5) {
         draw_line(pic, new_pixel(255, 0, 0), new_point(i, 0), new_point(i, i));
     }
 
-    // Draw some diagonal parallel to y = x
-    for (i = 0; i < XRES; i += 10) {
-        draw_line(pic, new_pixel(0, 255, 0), new_point(0, i), new_point(XRES - i, 0));
-    }
+    fill_rect(pic, new_pixel(0, 0, 0), new_point((XRES / 2) - 100, (YRES / 2) - 100),
+            new_point((XRES / 2) + 100, (YRES / 2) + 100));
 
-    // Draw some diagonal parallel to y = -x
-    for (i = 0; i < XRES; i += 10) {
-        draw_line(pic, new_pixel(0, 0, 0), new_point(0, i), new_point(i, 0));
+    // Oh boi~~~
+    for (i = (YRES / 2) - 100; i <= (YRES / 2) + 100; i += 10) {
+        draw_line(pic, new_pixel(0, 255, 0), new_point((XRES / 2), (YRES / 2)),
+                new_point((XRES / 2) + 100, i));
+        draw_line(pic, new_pixel(255, 255, 0), new_point((XRES / 2), (YRES / 2)),
+                new_point(-(XRES / 2) + 100, -i));
     }
 
     // Write it out to an image
