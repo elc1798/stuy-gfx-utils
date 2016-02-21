@@ -10,6 +10,10 @@ fout:
 draw:
 	gcc -c gfx_utils/draw.c -o gfx_utils/draw.o
 
+run: all
+	./main.out
+	display pic1.ppm
+
 clean:
 	rm -f gfx_utils/*.o
 	rm -f *.ppm
