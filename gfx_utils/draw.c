@@ -17,6 +17,16 @@ void plot(pixel **pic, pixel pix, point p) {
     pic[YRES - p.y - 1][p.x] = pix;
 }
 
+void plot_with_offset(pixel **pic, pixel pix, point p, int offset_x, int offset_y) {
+    if (p.x + offset_x < 0 || p.y + offset_y < 0) {
+        printf("Failed printing: %d, %d\n", p.x + offset_x, p.y + offset_y);
+    }
+    if (p.x + offset_x < 0 || p.y + offset_y < 0 || p.x + offset_x >= XRES || p.y + offset_y >= YRES) {
+        return;
+    }
+    pic[YRES - p.y - 1 - offset_y][p.x + offset_x] = pix;
+}
+
 // Simple rectangular fill algorithm
 void fill_rect(pixel **pic, pixel pix, point p1, point p2) {
     int i, j;
