@@ -146,15 +146,24 @@ int get_octant(point initial, point final) {
 void draw_line(pixel **pic, pixel pix, point p1, point p2) {
     int octant = get_octant(p1, p2);
 
-    point p1_converted = convert_to_octant_1(p1, octant);
-    point p2_converted = convert_to_octant_1(p2, octant);
+    // We can "shift" p1 to (0, 0), and plot with an offset
+    point p1_converted = new_point(0, 0);
+    point p2_converted = convert_to_octant_1(new_point(p2.x - p1.x, p2.y - p1.y), octant);
+    // Always plot from left to right (lower x to higher x) so we can use the
+    // same loop guard for all cases
+    if (p2_converted.x < p1_converted.x) {
+        p1_converted = p2_converted;
+        p2_converted = new_point(0, 0);
+    }
     int x = p1_converted.x;
     int y = p1_converted.y;
     int A = p2_converted.y - p1_converted.y;
     int B = -(p2_converted.x - p1_converted.x);
     int d = 2 * A + B;
     while (x <= p2_converted.x) {
-        plot(pic, pix, convert_from_octant_1(new_point(x, y), octant));
+        // Convert the point to its original octant, and plot with p1 as the
+        // origin
+        plot_with_offset(pic, pix, convert_from_octant_1(new_point(x, y), octant), p1.x, p1.y);
         if (d > 0) {
             y += 1;
             d += 2 * B;
