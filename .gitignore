@@ -32,6 +32,7 @@
 *.dSYM/
 
 # Generated files
+*.png
 *.ppm
 
 # Dammit Mac OSX
