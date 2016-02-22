@@ -18,36 +18,27 @@ It is also handy to have some `defined` constants:
 
 ```
 #define FILENAME    "pic1.ppm"
-#define XRES        512
-#define YRES        512
-#define MAX_C_VAL   255
 ```
 
 To begin working with a picture, we need to initialize it:
 
 ```
-pixel **pic;
-pic = malloc(XRES * sizeof(pixel*));
-int i; for (i = 0; i < XRES; i++) {
-    pic[i] = malloc(YRES * sizeof(pixel));
-}
+pixel **pic = new_picture(XRES, YRES);
 ```
+
+By default, `XRES` and `YRES` are both 512, and `MAX_C_VAL` is the maximum color
+value, at 255.
 
 Because we are using `malloc`, it is good practice to `free` this memory after we are done using it:
 
 ```
-for (i = 0; i < XRES; i++) {
-    free(pic[i]);
-    pic[i] = NULL;
-}
-free(pic);
-pic = NULL;
+free_picture(pic);
 ```
 
 To write the picture out to a file, we only need a single line:
 
 ```
-filewrite(FILENAME, pic2string(pic, XRES, YRES, MAX_C_VAL), get_size_of_buff(XRES, YRES, MAX_C_VAL));
+filewrite(FILENAME, pic2string(pic), get_size_of_buff());
 ```
 
 Replace the parameters as necessary.
