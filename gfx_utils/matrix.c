@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <assert.h>
 #include "matrix.h"
 
@@ -19,6 +20,16 @@ void free_matrix(matrix *m) {
     }
     free(m->contents);
     free(m);
+}
+
+void print_matrix(matrix *m) {
+    int i; for (i = 0; i < m->rows; i++) {
+        printf("[ ");
+        int j; for (j = 0; j < m->cols; j++) {
+            printf("%02.2f ", m->contents[i][j]);
+        }
+        printf("]\n");
+    }
 }
 
 double dot_product(matrix *m1, matrix *m2) {

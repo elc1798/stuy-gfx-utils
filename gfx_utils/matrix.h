@@ -13,6 +13,7 @@ typedef struct {
 // Functions for creation / deletion
 matrix *new_matrix(int rows, int cols);
 void free_matrix(matrix *m);
+void print_matrix(matrix *m);
 
 // Matrix operations
 double dot_product(matrix *m1, matrix *m2);
