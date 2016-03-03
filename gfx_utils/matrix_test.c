@@ -28,10 +28,17 @@ int main() {
 
     scalar_multiply(a, 3);
     print_matrix(a);
+    printf("\n\n");
+
+    matrix *d = identity_matrix(7);
+    print_matrix(d);
+    printf("\n\n");
 
     free_matrix(a);
     free_matrix(b);
     free_matrix(c);
+    free_matrix(d);
+
     return 0;
 }
 

@@ -3,7 +3,6 @@
 
 #include "netpbm.h"
 
-typedef point edge[2];
 typedef struct {
     int rows;
     int cols;
@@ -19,6 +18,8 @@ void print_matrix(matrix *m);
 double dot_product(matrix *m1, matrix *m2);
 matrix *cross_product(matrix *m1, matrix *m2);
 void scalar_multiply(matrix *m, int a);
+
+matrix *identity_matrix(int n);
 
 #endif
 

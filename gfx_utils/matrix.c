@@ -74,3 +74,13 @@ void scalar_multiply(matrix *m, int a) {
     }
 }
 
+matrix *identity_matrix(int n) {
+    matrix *id_mat = new_matrix(n, n);
+    int i; for (i = 0; i < id_mat->rows; i++) {
+        int j; for (j = 0; j < id_mat->cols; j++) {
+            id_mat->contents[i][j] = (i == j) ? 1 : 0;
+        }
+    }
+    return id_mat;
+}
+
