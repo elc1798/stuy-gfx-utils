@@ -1,5 +1,5 @@
-#ifndef _NETPBM
-#define _NETPBM
+#ifndef _GFX_NETPBM
+#define _GFX_NETPBM
 
 #define PPM_HEADER "P3"
 
