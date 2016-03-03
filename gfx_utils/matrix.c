@@ -31,6 +31,35 @@ double dot_product(matrix *m1, matrix *m2) {
     return sum;
 }
 
-matrix *cross_product(matrix *m1, matrix *m2);
-void scalar_multiply(matrix *m, int a);
+matrix *cross_product(matrix *m1, matrix *m2) {
+    assert(m1->cols == m2->rows);
+    matrix *cross_prod = new_matrix(m1->rows, m2->cols);
+    int i; for (i = 0; i < m1->rows; i++) {
+        int j; for (j = 0; j < m2->cols; j++) {
+            // Construct temporary mats to dot product with
+            matrix *t1 = new_matrix(1, m1->cols);
+            int k; for (k = 0; k < m1->cols; k++) {
+                t1->contents[0][k] = m1->contents[i][k];
+            }
+
+            matrix *t2 = new_matrix(1, m2->rows);
+            for (k = 0; k < m2->rows; k++) {
+                t2->contents[0][k] = m2->contents[k][j];
+            }
+
+            cross_prod->contents[i][j] = dot_product(t1, t2);
+            free_matrix(t1);
+            free_matrix(t2);
+        }
+    }
+    return cross_prod;
+}
+
+void scalar_multiply(matrix *m, int a) {
+    int i; for (i = 0; i < m->rows; i++) {
+        int j; for (j = 0; j < m->cols; j++) {
+            m->contents[i][j] *= a;
+        }
+    }
+}
 
