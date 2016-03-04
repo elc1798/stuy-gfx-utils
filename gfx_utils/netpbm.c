@@ -38,6 +38,49 @@ point new_point(int x, int y) {
     return retval;
 }
 
+edge new_edge(point start, point end) {
+    edge retval;
+    retval.start = start;
+    retval.end = end;
+    return retval;
+}
+
+void free_point_matrix(point_matrix *pt_mat) {
+    if (pt_mat && pt_mat->next) {
+        free_point_matrix(pt_mat->next);
+        free(pt_mat);
+    }
+}
+
+point_matrix *new_pt_mat_point(point p) {
+    point_matrix *retval = malloc(sizeof(point_matrix));
+    retval->prev = NULL;
+    retval->next = NULL;
+    retval->pt = p;
+    retval->connect = false;
+    return retval;
+}
+
+point_matrix *add_point(point_matrix *pt_mat, point p) {
+    if (!pt_mat) {
+        return new_pt_mat_point(p);
+    } else {
+        point_matrix *new_pt = new_pt_mat_point(p);
+        new_pt->next = pt_mat;
+        pt_mat->prev = new_pt;
+        return new_pt;
+    }
+}
+
+point_matrix *add_edge(point_matrix *pt_mat, edge e) {
+    point_matrix *endpt = add_point(pt_mat, e.end);
+    point_matrix *startpt = new_pt_mat_point(e.start);
+    startpt->connect = true;
+    startpt->next = endpt;
+    endpt->prev = startpt;
+    return startpt;
+}
+
 pixel **new_picture(int xres, int yres) {
     pixel **pic;
     pic = malloc(yres * sizeof(pixel*));
