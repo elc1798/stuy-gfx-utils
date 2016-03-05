@@ -19,29 +19,16 @@ int main() {
     MAX_C_VAL = 255;
 
     pixel **pic = new_picture(XRES, YRES);
+    point_matrix *pt_mat = NULL;
 
     fill_rect(pic, new_pixel(0, 0, 0), new_point(0, 0), new_point(XRES, YRES));
 
-    int red_val = 0;
-    int inc = 2;
-
-    int i; for (i = 0; i <= YRES; i += 4) {
-        draw_line(pic, new_pixel(red_val, 0, 255), new_point(0, YRES - i), new_point(i, i));
-        if (red_val + inc < 0 || red_val + inc > 255) {
-            inc *= -1;
-        }
-        red_val += inc;
+    int i; for (i = 0; i < YRES; i += 5) {
+        pt_mat = add_edge(pt_mat, new_edge(new_point(0, i), new_point(i, i)));
+        pt_mat = add_point(pt_mat, new_point(i + 10, i));
     }
 
-    for (i = XRES; i >= 0; i -= 4) {
-        draw_line(pic, new_pixel(red_val, 0, 255), new_point(i, i), new_point(XRES - i, 0));
-        if (red_val + inc < 0 || red_val + inc > 255) {
-            inc *= -1;
-        }
-        red_val += inc;
-    }
-
-    draw_line(pic, new_pixel(255, 0, 255), new_point(0, 0), new_point(XRES, YRES));
+    render_point_matrix(pic, new_pixel(255, 0, 0), pt_mat);
 
     // Write it out to an image
     char *s = pic2string(pic);
@@ -53,6 +40,10 @@ int main() {
 
     free_picture(pic);
     pic = NULL;
+
+    free_point_matrix(pt_mat);
+    pt_mat = NULL;
+
     return 0;
 }
 

@@ -173,3 +173,16 @@ void draw_line(pixel **pic, pixel pix, point p1, point p2) {
     }
 }
 
+// Renders all the points and lines in a point matrix
+void render_point_matrix(pixel **pic, pixel pix, point_matrix *pt_mat) {
+    point_matrix *tmp = pt_mat;
+    while (tmp) {
+        if (tmp->connect) {
+            draw_line(pic, pix, tmp->pt, tmp->next->pt);
+            tmp = tmp->next;
+        } else {
+            plot(pic, pix, tmp->pt);
+        }
+        tmp = tmp->next;
+    }
+}
