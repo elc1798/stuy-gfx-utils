@@ -101,7 +101,7 @@ matrix *get_translation_matrix(int dx, int dy, int dz) {
     return trans_mat;
 }
 
-matrix *get_scale_matrix(int x_fac, int y_fac, int z_fac) {
+matrix *get_scale_matrix(double x_fac, double y_fac, double z_fac) {
     matrix *trans_mat = identity_matrix(4);
     trans_mat->contents[0][0] = x_fac;
     trans_mat->contents[1][1] = y_fac;

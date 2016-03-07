@@ -32,25 +32,34 @@ int main() {
 
     matrix *translate = get_translation_matrix(XRES / 2, YRES / 2 , 0);
 
-    int i; for (i = 0; i < 3; i++) {
-        printf("DRAWING SQUARE %d \n", i);
+    int size; for (size = 1; size < 4; size++) {
 
-        master_transformation_matrix = translate;
+        matrix *scale = get_scale_matrix((double) size, (double) size, 1.0);
+        apply_trans(scale, pt_mat);
+        free_matrix(scale);
 
-        matrix *rotation = get_rot_z_matrix(30.0);
+        int i; for (i = 0; i < 3; i++) {
 
-        master_transformation_matrix = cross_product(master_transformation_matrix, rotation);
+            matrix *rotation = get_rot_z_matrix(30.0);
 
-        apply_trans(master_transformation_matrix, pt_mat);
-        render_point_matrix(pic, new_pixel(0, 218, 195), pt_mat);
+            master_transformation_matrix = cross_product(translate, rotation);
 
-        // Reset for next rotation
-        matrix *reset = get_translation_matrix(-XRES / 2, -YRES / 2, 0);
+            apply_trans(master_transformation_matrix, pt_mat);
+            render_point_matrix(pic, new_pixel(0, 218, 195 + 15 * i), pt_mat);
+
+            // Reset for next rotation
+            matrix *reset = get_translation_matrix(-XRES / 2, -YRES / 2, 0);
+            apply_trans(reset, pt_mat);
+            free_matrix(reset);
+
+            free(rotation);
+            free(master_transformation_matrix);
+        }
+
+        // Reset the scale for the next iteration
+        matrix *reset = get_scale_matrix((double) 1 / size, (double) 1 / size, 1.0);
         apply_trans(reset, pt_mat);
         free_matrix(reset);
-
-        free(rotation);
-        free(master_transformation_matrix);
     }
 
     // Write it out to an image
