@@ -35,6 +35,15 @@ point new_point(int x, int y) {
     point retval;
     retval.x = x;
     retval.y = y;
+    retval.z = 0;
+    return retval;
+}
+
+point new_point_3d(int x, int y, int z) {
+    point retval;
+    retval.x = x;
+    retval.y = y;
+    retval.z = z;
     return retval;
 }
 

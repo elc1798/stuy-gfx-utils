@@ -20,6 +20,7 @@ pixel new_pixel(int r, int g, int b);
 typedef struct {
     int x;
     int y;
+    int z;
 } point;
 
 typedef struct {
@@ -43,6 +44,7 @@ typedef struct pt_mat {
 
 // Creates a new point given coordinates
 point new_point(int x, int y);
+point new_point_3d(int x, int y, int z);
 
 // Creates a new edge given endpoints
 edge new_edge(point start, point end);
