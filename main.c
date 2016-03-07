@@ -3,6 +3,7 @@
 
 #include "gfx_utils/fout.h"
 #include "gfx_utils/netpbm.h"
+#include "gfx_utils/matrix.h"
 #include "gfx_utils/draw.h"
 
 #define FILENAME    "pic1.ppm"
@@ -20,15 +21,37 @@ int main() {
 
     pixel **pic = new_picture(XRES, YRES);
     point_matrix *pt_mat = NULL;
+    matrix *master_transformation_matrix;
 
     fill_rect(pic, new_pixel(0, 0, 0), new_point(0, 0), new_point(XRES, YRES));
 
-    int i; for (i = 0; i < YRES; i += 5) {
-        pt_mat = add_edge(pt_mat, new_edge(new_point(0, i), new_point(i, i)));
-        pt_mat = add_point(pt_mat, new_point(i + 10, i));
-    }
+    pt_mat = add_edge(pt_mat, new_edge(new_point(-50, 50), new_point(50, 50)));
+    pt_mat = add_edge(pt_mat, new_edge(new_point(50, 50), new_point(50, -50)));
+    pt_mat = add_edge(pt_mat, new_edge(new_point(50, -50), new_point(-50, -50)));
+    pt_mat = add_edge(pt_mat, new_edge(new_point(-50, -50), new_point(-50, 50)));
 
-    render_point_matrix(pic, new_pixel(255, 0, 0), pt_mat);
+    matrix *translate = get_translation_matrix(XRES / 2, YRES / 2 , 0);
+
+    int i; for (i = 0; i < 3; i++) {
+        printf("DRAWING SQUARE %d \n", i);
+
+        master_transformation_matrix = translate;
+
+        matrix *rotation = get_rot_z_matrix(30.0);
+
+        master_transformation_matrix = cross_product(master_transformation_matrix, rotation);
+
+        apply_trans(master_transformation_matrix, pt_mat);
+        render_point_matrix(pic, new_pixel(0, 218, 195), pt_mat);
+
+        // Reset for next rotation
+        matrix *reset = get_translation_matrix(-XRES / 2, -YRES / 2, 0);
+        apply_trans(reset, pt_mat);
+        free_matrix(reset);
+
+        free(rotation);
+        free(master_transformation_matrix);
+    }
 
     // Write it out to an image
     char *s = pic2string(pic);
@@ -43,6 +66,9 @@ int main() {
 
     free_point_matrix(pt_mat);
     pt_mat = NULL;
+
+    free_matrix(translate);
+    translate = NULL;
 
     return 0;
 }
