@@ -93,3 +93,77 @@ matrix *identity_matrix(int n) {
     return id_mat;
 }
 
+matrix *get_translation_matrix(int dx, int dy, int dz) {
+    matrix *trans_mat = identity_matrix(4);
+    trans_mat->contents[0][3] = dx;
+    trans_mat->contents[1][3] = dy;
+    trans_mat->contents[2][3] = dz;
+    return trans_mat;
+}
+
+matrix *get_scale_matrix(int x_fac, int y_fac, int z_fac) {
+    matrix *trans_mat = identity_matrix(4);
+    trans_mat->contents[0][0] = x_fac;
+    trans_mat->contents[1][1] = y_fac;
+    trans_mat->contents[2][2] = z_fac;
+    return trans_mat;
+}
+
+double rad2deg(double rad) {
+    return rad / PI * 180.0;
+}
+
+double deg2rad(double deg) {
+    return deg / 180.0 * PI;
+}
+
+matrix *get_rot_x_matrix(double theta) {
+    theta = deg2rad(theta);
+    matrix *rot_x_mat = identity_matrix(4);
+    rot_x_mat->contents[1][1] = cos(theta);
+    rot_x_mat->contents[1][2] = -1 * sin(theta);
+    rot_x_mat->contents[2][1] = sin(theta);
+    rot_x_mat->contents[2][2] = cos(theta);
+    return rot_x_mat;
+}
+
+matrix *get_rot_y_matrix(double theta) {
+    theta = deg2rad(theta);
+    matrix *rot_y_mat = identity_matrix(4);
+    rot_y_mat->contents[0][0] = cos(theta);
+    rot_y_mat->contents[0][2] = -1 * sin(theta);
+    rot_y_mat->contents[2][0] = sin(theta);
+    rot_y_mat->contents[2][2] = cos(theta);
+    return rot_y_mat;
+}
+
+matrix *get_rot_z_matrix(double theta) {
+    theta = deg2rad(theta);
+    matrix *rot_z_mat = identity_matrix(4);
+    rot_z_mat->contents[0][0] = cos(theta);
+    rot_z_mat->contents[0][1] = -1 * sin(theta);
+    rot_z_mat->contents[1][0] = sin(theta);
+    rot_z_mat->contents[1][1] = cos(theta);
+    return rot_z_mat;
+}
+
+void apply_trans(matrix *master, point_matrix *pt_mat) {
+    while (pt_mat) {
+        matrix *pt = new_matrix(4, 1);
+        pt->contents[0][0] = pt_mat->pt.x;
+        pt->contents[1][0] = pt_mat->pt.y;
+        pt->contents[2][0] = pt_mat->pt.z;
+        pt->contents[3][0] = 1;
+
+        matrix *new_pt = cross_product(master, pt);
+        pt_mat->pt.x = (int) new_pt->contents[0][0];
+        pt_mat->pt.y = (int) new_pt->contents[1][0];
+        pt_mat->pt.z = (int) new_pt->contents[2][0];
+
+        free_matrix(pt);
+        free_matrix(new_pt);
+
+        pt_mat = pt_mat->next;
+    }
+}
+

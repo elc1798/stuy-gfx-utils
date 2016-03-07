@@ -21,5 +21,12 @@ void scalar_multiply(matrix *m, int a);
 
 matrix *identity_matrix(int n);
 
+matrix *get_translation_matrix(int dx, int dy, int dz);
+matrix *get_scale_matrix(int x_fac, int y_fac, int z_fac);
+matrix *get_rot_x_matrix(double theta);
+matrix *get_rot_y_matrix(double theta);
+matrix *get_rot_z_matrix(double theta);
+void apply_trans(matrix *master, point_matrix *pt_mat);
+
 #endif
 
