@@ -1,7 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <math.h>
+
 #include "matrix.h"
+
+#define PI 3.14159265358979
 
 matrix *new_matrix(int rows, int cols) {
     matrix *mat = malloc(sizeof(matrix));
@@ -10,6 +14,11 @@ matrix *new_matrix(int rows, int cols) {
     mat->contents = malloc(sizeof(double *) * rows);
     int i; for (i = 0; i < rows; i++) {
         mat->contents[i] = malloc(sizeof(double) * cols);
+    }
+    for (i = 0; i < mat->rows; i++) {
+        int j; for (j = 0; j < mat->cols; j++) {
+            mat->contents[i][j] = 0;
+        }
     }
     return mat;
 }
