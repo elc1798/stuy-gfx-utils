@@ -37,3 +37,6 @@
 
 # Dammit Mac OSX
 .DS_Store
+
+# Vim stuff
+*.swp
