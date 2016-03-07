@@ -1,5 +1,5 @@
-all: netpbm fout draw
-	gcc main.c gfx_utils/netpbm.o gfx_utils/fout.o gfx_utils/draw.o -I gfx_utils/ -o main.out
+all: netpbm fout draw matrix
+	gcc main.c gfx_utils/netpbm.o gfx_utils/fout.o gfx_utils/draw.o gfx_utils/matrix.o -I gfx_utils/ -lm -o main.out
 
 netpbm:
 	gcc -c gfx_utils/netpbm.c -o gfx_utils/netpbm.o
@@ -9,6 +9,9 @@ fout:
 
 draw:
 	gcc -c gfx_utils/draw.c -o gfx_utils/draw.o
+
+matrix:
+	gcc -c gfx_utils/matrix.c -lm -o gfx_utils/matrix.o
 
 run: all
 	./main.out
