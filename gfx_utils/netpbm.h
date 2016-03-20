@@ -28,6 +28,13 @@ typedef struct {
     point end;
 } edge;
 
+typedef double (*param_func)(double);
+
+typedef struct {
+    param_func x;
+    param_func y;
+} parametric;
+
 /*
  * A point matrix is a doubly linked list of points.
  * prev - The previous node

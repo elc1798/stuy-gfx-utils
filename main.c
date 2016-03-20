@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "gfx_utils/fout.h"
 #include "gfx_utils/netpbm.h"
@@ -11,6 +12,14 @@
 extern int XRES;
 extern int YRES;
 extern int MAX_C_VAL;
+
+double circ_x(double t) {
+    return 100 * cos(2 * M_PI * t) + XRES / 2;
+}
+
+double circ_y(double t) {
+    return 100 * sin(2 * M_PI * t) + YRES / 2;
+}
 
 int main() {
     // XRES and YRES exist already. This allows easy configuration
@@ -60,6 +69,25 @@ int main() {
         matrix *reset = get_scale_matrix((double) 1 / size, (double) 1 / size, 1.0);
         apply_trans(reset, pt_mat);
         free_matrix(reset);
+    }
+
+    // Draw a circle
+    parametric circle;
+    circle.x = (void *) &circ_x;
+    circle.y = (void *) &circ_y;
+
+    double step, x0, y0, x, y;
+    double CEILING = 1.001;
+    step = 0.01;
+    x0 = circle.x(0);
+    y0 = circle.y(0);
+
+    for (double t = step; t < CEILING; t += step) {
+        x = circle.x(t);
+        y = circle.y(t);
+        draw_line(pic, new_pixel(0, 255, 0), new_point(x0, y0), new_point(x, y));
+        x0 = x;
+        y0 = y; 
     }
 
     // Write it out to an image
