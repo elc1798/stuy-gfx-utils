@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <math.h>
 
+#include "netpbm.h"
 #include "matrix.h"
 
 #define PI 3.14159265358979

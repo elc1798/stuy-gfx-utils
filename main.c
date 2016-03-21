@@ -13,14 +13,6 @@ extern int XRES;
 extern int YRES;
 extern int MAX_C_VAL;
 
-double circ_x(double t) {
-    return 100 * cos(2 * M_PI * t) + XRES / 2;
-}
-
-double circ_y(double t) {
-    return 100 * sin(2 * M_PI * t) + YRES / 2;
-}
-
 int main() {
     // XRES and YRES exist already. This allows easy configuration
     // The following are the default values of these constants
@@ -71,24 +63,15 @@ int main() {
         free_matrix(reset);
     }
 
+    // We want to draw a circle afterwards, but our point matrix is.. well...
+    // icky. And populated. We can do some clearing easily:
+
+    free_point_matrix(pt_mat);
+    pt_mat = NULL;
+
     // Draw a circle
-    parametric circle;
-    circle.x = (void *) &circ_x;
-    circle.y = (void *) &circ_y;
-
-    double step, x0, y0, x, y;
-    double CEILING = 1.001;
-    step = 0.01;
-    x0 = circle.x(0);
-    y0 = circle.y(0);
-
-    for (double t = step; t < CEILING; t += step) {
-        x = circle.x(t);
-        y = circle.y(t);
-        draw_line(pic, new_pixel(0, 255, 0), new_point(x0, y0), new_point(x, y));
-        x0 = x;
-        y0 = y; 
-    }
+    pt_mat = add_circle(pt_mat, new_point(XRES / 2, YRES / 2), 50);
+    render_point_matrix(pic, new_pixel(0, 255, 0), pt_mat);
 
     // Write it out to an image
     char *s = pic2string(pic);

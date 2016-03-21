@@ -28,13 +28,6 @@ typedef struct {
     point end;
 } edge;
 
-typedef double (*param_func)(double);
-
-typedef struct {
-    param_func x;
-    param_func y;
-} parametric;
-
 /*
  * A point matrix is a doubly linked list of points.
  * prev - The previous node
@@ -68,6 +61,25 @@ point_matrix *add_point(point_matrix *pt_mat, point p);
 // the linked list, who's next node is the end point. The original list is after
 // the end point. The new head is returned at the completion of the function
 point_matrix *add_edge(point_matrix *pt_mat, edge e);
+
+// Adds a circle to the point matrix. This will continously add edges to the
+// point matrix to fill the circle
+point_matrix *add_circle(point_matrix *pt_mat, point center, int radius);
+
+// Adds a Hermite curve to the point matrix, by (like the circle) continuously
+// adding adges to the point matrix. Takes initial point, rate of change at
+// initial point, final point, and rate of change at final point
+point_matrix *add_hermite(point_matrix *pt_mat, double x0, double y0,
+                            double dx0, double dy0, double x1, double y1,
+                            double dx1, double dy1);
+
+// Adds a Bezier curve to the point matrix by continously adding edges to the
+// point matrix
+point_matrix *add_bezier(point_matrix *pt_mat,
+                         float x0, float y0,
+                         float x1, float y1,
+                         float x2, float y2,
+                         float x3, float y3);
 
 /* PICTURE OPERATIONS */
 pixel **new_picture(int xres, int yres);
