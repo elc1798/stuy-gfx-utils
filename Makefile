@@ -31,6 +31,6 @@ run: all
 
 clean:
 	rm -f gfx_utils/*.o
-	rm -f *.ppm
+	rm -f rendered.ppm
 	rm -f *.out
 	rm -f .*.c
