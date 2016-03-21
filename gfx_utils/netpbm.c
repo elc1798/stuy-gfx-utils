@@ -165,8 +165,8 @@ point_matrix *add_hermite(point_matrix *pt_mat, double x0, double y0,
     inverse->contents[3][2] = 0;
     inverse->contents[3][3] = 0;
 
-    matrix *res_x = cross_product(inverse, x_in);
-    matrix *res_y = cross_product(inverse, y_in);
+    matrix *res_x = cross_product(x_in, inverse);
+    matrix *res_y = cross_product(y_in, inverse);
 
     double x_i, y_i, x_f, y_f, t;
     double step = 0.01;

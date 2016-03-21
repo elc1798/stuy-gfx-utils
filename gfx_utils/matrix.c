@@ -25,6 +25,9 @@ matrix *new_matrix(int rows, int cols) {
 }
 
 void free_matrix(matrix *m) {
+    if (!m) {
+        return;
+    }
     int i; for (i = 0; i < m->rows; i++) {
         free(m->contents[i]);
     }

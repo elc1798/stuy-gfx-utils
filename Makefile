@@ -15,7 +15,7 @@ matrix:
 
 run: all
 	./main.out
-	display pic1.ppm
+	display rendered.ppm
 
 clean:
 	rm -f gfx_utils/*.o
