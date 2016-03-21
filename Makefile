@@ -1,5 +1,5 @@
 all: netpbm fout draw matrix
-	gcc main.c gfx_utils/netpbm.o gfx_utils/fout.o gfx_utils/draw.o gfx_utils/matrix.o -I gfx_utils/ -lm -o main.out
+	gcc .main.c gfx_utils/netpbm.o gfx_utils/fout.o gfx_utils/draw.o gfx_utils/matrix.o -I gfx_utils/ -lm -o main.out
 
 netpbm:
 	gcc -c gfx_utils/netpbm.c -lm -o gfx_utils/netpbm.o
@@ -21,3 +21,4 @@ clean:
 	rm -f gfx_utils/*.o
 	rm -f *.ppm
 	rm -f *.out
+	rm -f .*.c

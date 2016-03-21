@@ -77,12 +77,21 @@ KNOWN_COMMANDS = {
 }
 
 TO_EXEC = []
+SAVE_NAME = ""
 
 def interpret(commands):
-    global FILE_BODY, TO_EXEC
+    global FILE_BODY, TO_EXEC, SAVE_NAME
     counter = 0
     while counter < len(commands):
         line = commands[counter]
+
+        # Special behavior for save
+        if line == "save":
+            counter += 1
+            SAVE_NAME = commands[counter]
+            counter += 1
+            continue
+
         if line not in KNOWN_COMMANDS:
             print "Unknown command: %s" % (line);
 
@@ -109,7 +118,7 @@ def interpret(commands):
 
         counter += 1
 
-    OUTFILE = open("main.c", 'w')
+    OUTFILE = open(".main.c", 'w')
     OUTFILE.write("\n".join((FILE_HEAD, FILE_BODY, FILE_FOOT)))
     OUTFILE.close()
 
@@ -120,6 +129,10 @@ def main():
         interpret(cmds)
     for sh in TO_EXEC:
         os.system(sh)
+    if SAVE_NAME != "":
+        os.system("cp rendered.ppm %s" % (SAVE_NAME))
+    os.system("make clean")
+
 
 if __name__ == "__main__":
     main()
