@@ -7,8 +7,8 @@ public class Image {
 
     public int XRES;
     public int YRES;
+    public Pixel[][] canvas;
 
-    private Pixel[][] canvas;
     private int originX;
     private int originY;
     private boolean reflectOverX;
