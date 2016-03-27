@@ -20,6 +20,7 @@ public class Image {
         this.originY = 0;
         this.reflectOverX = false;
         this.canvas = new Pixel[YRES][XRES];
+        initializeCanvas();
     }
 
     public Image(int xres, int yres) {
@@ -29,6 +30,15 @@ public class Image {
         this.originY = 0;
         this.reflectOverX = false;
         this.canvas = new Pixel[YRES][XRES];
+        initializeCanvas();
+    }
+
+    private void initializeCanvas() {
+        for (int i = 0; i < this.canvas.length; i++) {
+            for (int j = 0; j < this.canvas[0].length; j++) {
+                this.canvas[i][j] = new Pixel();
+            }
+        }
     }
 
     public void setOrigin(Point origin) {
@@ -42,6 +52,10 @@ public class Image {
 
     public void setOriginY(int y) {
         this.originY = y;
+    }
+
+    public void shouldRelectOverX(boolean b) {
+        this.reflectOverX = b;
     }
 
     public void plot(Point p, Pixel color) {
