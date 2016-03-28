@@ -2,6 +2,10 @@ package org.stuygfx.graphics;
 
 import java.util.ArrayList;
 
+import org.stuygfx.math.Matrix;
+import org.stuygfx.math.MatrixMath;
+import org.stuygfx.math.Parametric;
+
 public class EdgeMatrix {
 
     public ArrayList<Edge> edges;
@@ -20,5 +24,91 @@ public class EdgeMatrix {
 
     public void addEdge(Point start, Point end) {
         edges.add(new Edge(start, end));
+    }
+
+    public void addParametric(Parametric xFunc, Parametric yFunc) {
+        double x0, y0, x, y;
+
+        double CEILING = 1.0001;
+        double step = 0.0025;
+        x0 = xFunc.get(0);
+        y0 = yFunc.get(0);
+
+        for (double t = step; t < CEILING; t += step) {
+            x = xFunc.get(t);
+            y = yFunc.get(t);
+
+            addEdge(new Point((int) x0, (int) y0), new Point((int) x, (int) y));
+            x0 = x;
+            y0 = y;
+        }
+    }
+
+    public void addCircle(final Point center, final double radius) {
+        Parametric x = new Parametric() {
+            @Override
+            public Double get(double t) {
+                return radius * Math.cos(2 * Math.PI * t) + center.x;
+            }
+        };
+
+        Parametric y = new Parametric() {
+            @Override
+            public Double get(double t) {
+                return radius * Math.cos(2 * Math.PI * t) + center.y;
+            }
+        };
+
+        addParametric(x, y);
+    }
+
+    public void addHermiteCurve(double x0, double y0, double dx0, double dy0, double x1, double y1, double dx1,
+            double dy1) {
+        double[][] xIn = { { x0, dx0, x1, dx1 } };
+        double[][] yIn = { { y0, dy0, y1, dy1 } };
+
+        double[][] inverse = { { 2, -2, 1, 1 }, { -3, 3, -2, -1 }, { 0, 0, 1, 0 }, { 1, 0, 0, 0 } };
+
+        final Matrix xOut = MatrixMath.crossProduct(xIn, inverse);
+        final Matrix yOut = MatrixMath.crossProduct(yIn, inverse);
+
+        Parametric x = new Parametric() {
+            @Override
+            public Double get(double t) {
+                return xOut.data[0][0] * Math.pow(t, 3) + xOut.data[0][1] * Math.pow(t, 2) + xOut.data[0][2] * t
+                        + xOut.data[0][3];
+            }
+        };
+
+        Parametric y = new Parametric() {
+            @Override
+            public Double get(double t) {
+                return yOut.data[0][0] * Math.pow(t, 3) + yOut.data[0][1] * Math.pow(t, 2) + yOut.data[0][2] * t
+                        + yOut.data[0][3];
+            }
+        };
+
+        addParametric(x, y);
+    }
+
+    public void addBezierCurve(final double x0, final double y0, final double x1, final double y1, final double x2,
+            final double y2, final double x3, final double y3) {
+        Parametric x = new Parametric() {
+            @Override
+            public Double get(double t) {
+                return x0 * Math.pow(1 - t, 3) + 3 * x1 * Math.pow(1 - t, 2) * t + 3 * x2 * (1 - t) * Math.pow(t, 2)
+                        + x3 * Math.pow(t, 3);
+            }
+        };
+
+        Parametric y = new Parametric() {
+            @Override
+            public Double get(double t) {
+                return y0 * Math.pow(1 - t, 3) + 3 * y1 * Math.pow(1 - t, 2) * t + 3 * y2 * (1 - t) * Math.pow(t, 2)
+                        + y3 * Math.pow(t, 3);
+            }
+        };
+
+        addParametric(x, y);
     }
 }
