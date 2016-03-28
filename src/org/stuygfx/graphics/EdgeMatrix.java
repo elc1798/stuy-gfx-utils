@@ -48,7 +48,7 @@ public class EdgeMatrix {
         }
     }
 
-    public void addCircle(final Point center, final double radius) {
+    public void addCircle(final Point center, final Double radius) {
         Parametric x = new Parametric() {
             @Override
             public Double get(double t) {
@@ -66,8 +66,8 @@ public class EdgeMatrix {
         addParametric(x, y);
     }
 
-    public void addHermiteCurve(double x0, double y0, double dx0, double dy0, double x1, double y1, double dx1,
-            double dy1) {
+    public void addHermiteCurve(Double x0, Double y0, Double dx0, Double dy0, Double x1, Double y1, Double dx1,
+            Double dy1) {
         double[][] xIn = { { x0, dx0, x1, dx1 } };
         double[][] yIn = { { y0, dy0, y1, dy1 } };
 
@@ -95,8 +95,8 @@ public class EdgeMatrix {
         addParametric(x, y);
     }
 
-    public void addBezierCurve(final double x0, final double y0, final double x1, final double y1, final double x2,
-            final double y2, final double x3, final double y3) {
+    public void addBezierCurve(final Double x0, final Double y0, final Double x1, final Double y1, final Double x2,
+            final Double y2, final Double x3, final Double y3) {
         Parametric x = new Parametric() {
             @Override
             public Double get(double t) {
