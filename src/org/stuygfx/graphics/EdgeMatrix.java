@@ -59,7 +59,7 @@ public class EdgeMatrix {
         Parametric y = new Parametric() {
             @Override
             public Double get(double t) {
-                return radius * Math.cos(2 * Math.PI * t) + center.y;
+                return radius * Math.sin(2 * Math.PI * t) + center.y;
             }
         };
 
