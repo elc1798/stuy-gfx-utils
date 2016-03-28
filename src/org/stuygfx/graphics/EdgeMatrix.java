@@ -14,6 +14,10 @@ public class EdgeMatrix {
         edges = new ArrayList<Edge>();
     }
 
+    public void empty() {
+        edges.clear();
+    }
+
     public void addPoint(Point p) {
         edges.add(new Edge(p, p));
     }
