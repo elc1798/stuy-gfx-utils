@@ -3,9 +3,13 @@ package org.stuygfx;
 import java.io.IOException;
 
 import org.stuygfx.graphics.Draw;
+import org.stuygfx.graphics.EdgeMatrix;
 import org.stuygfx.graphics.Image;
 import org.stuygfx.graphics.Pixel;
 import org.stuygfx.graphics.Point;
+import org.stuygfx.math.Matrix;
+import org.stuygfx.math.MatrixMath;
+import org.stuygfx.math.Transformations;
 
 public class Main {
 
@@ -19,20 +23,23 @@ public class Main {
         Pixel red = new Pixel(255, 0, 0);
         Pixel yellow = new Pixel(255, 255, 0);
 
-        for (int i = 0; i < img.YRES; i += 4) {
-            Draw.line(img, green, center, new Point(img.XRES - 1, i));
-        }
+        EdgeMatrix em = new EdgeMatrix();
+        em.addEdge(new Point(-50, 50), new Point(50, 50));
+        em.addEdge(new Point(50, 50), new Point(50, -50));
+        em.addEdge(new Point(50, -50), new Point(-50, -50));
+        em.addEdge(new Point(-50, -50), new Point(-50, 50));
 
-        for (int i = 0; i < img.XRES; i += 4) {
-            Draw.line(img, yellow, center, new Point(i, img.YRES - 1));
-        }
+        for (int i = 0; i < 3; i++) {
+            Matrix rot = Transformations.getRotZMatrix(30.0);
+            Matrix trans = Transformations.getTranslationMatrix(img.XRES / 2, img.YRES / 2, 0);
+            Matrix master = MatrixMath.crossProduct(trans, rot);
 
-        for (int i = 0; i < img.YRES; i += 4) {
-            Draw.line(img, blue, center, new Point(0, i));
-        }
+            Transformations.applyTransformation(master, em);
+            Draw.edgeMatrix(img, green, em);
 
-        for (int i = 0; i < img.XRES; i += 4) {
-            Draw.line(img, red, center, new Point(i, 0));
+            // Reset the translation
+            Matrix reset = Transformations.getTranslationMatrix(-img.XRES / 2, -img.YRES / 2, 0);
+            Transformations.applyTransformation(reset, em);
         }
 
         PPMGenerator.createPPM("test.ppm", img);
