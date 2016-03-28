@@ -19,9 +19,7 @@ public class Main {
 
         Point center = new Point(img.XRES / 2, img.YRES / 2);
         Pixel green = new Pixel(0, 255, 0);
-        Pixel blue = new Pixel(0, 0, 255);
         Pixel red = new Pixel(255, 0, 0);
-        Pixel yellow = new Pixel(255, 255, 0);
 
         EdgeMatrix em = new EdgeMatrix();
         em.addEdge(new Point(-50, 50), new Point(50, 50));
@@ -41,6 +39,22 @@ public class Main {
             Matrix reset = Transformations.getTranslationMatrix(-img.XRES / 2, -img.YRES / 2, 0);
             Transformations.applyTransformation(reset, em);
         }
+
+        // Clear for testing curves
+        em.empty();
+
+        em.addCircle(center, 100);
+        em.addBezierCurve(0, 0, 256, 0, 256, 512, 512, 512);
+        em.addBezierCurve(512, 512, 256, 0, 256, 512, 0, 0);
+        em.addBezierCurve(0, 0, 0, 256, 512, 256, 512, 512);
+        em.addBezierCurve(512, 512, 0, 256, 512, 256, 0, 0);
+        Draw.edgeMatrix(img, red, em);
+
+        Matrix rot = Transformations.getRotZMatrix(90.0);
+        Matrix trans = Transformations.getTranslationMatrix(img.XRES, 0, 0);
+        Matrix master = MatrixMath.crossProduct(trans, rot);
+        Transformations.applyTransformation(master, em);
+        Draw.edgeMatrix(img, red, em);
 
         PPMGenerator.createPPM("test.ppm", img);
         System.gc();
