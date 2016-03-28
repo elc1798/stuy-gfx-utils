@@ -76,3 +76,6 @@ sysProps.xml
 Thumbs.db
 ehthumbs.db
 
+# Generated Files
+*.ppm
+
