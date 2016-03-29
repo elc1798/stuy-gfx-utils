@@ -22,13 +22,16 @@ public class Main {
         }
 
         while (sc.hasNextLine()) {
-            currCommand = sc.nextLine();
+            currCommand = sc.nextLine().trim();
             if (interpreter.hasNoParams(currCommand)) {
                 currArgs = CONSTANTS.NO_ARGS;
             } else {
-                currArgs = interpreter.getParams(currCommand, sc.nextLine());
+                currArgs = interpreter.getParams(currCommand, sc.nextLine().trim());
             }
-            System.out.printf("Calling %s with %d parameters\n", currCommand, currArgs.length);
+            if (currArgs == null) {
+                continue;
+            }
+            System.out.printf(">> Calling %s with %d parameters\n", currCommand, currArgs.length);
             interpreter.call(currCommand, currArgs);
         }
 

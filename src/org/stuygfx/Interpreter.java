@@ -195,14 +195,21 @@ public class Interpreter {
     @SuppressWarnings("rawtypes")
     public Object[] getParams(String cmd, String[] args) {
         if (!fxnMapper.containsKey(cmd)) {
+            System.err.println("!! Command not recognized, cannot get parameters");
             return null;
         }
 
         int counter = 0;
+        int required = 0;
         Class[] paramTypes = fxnMapper.get(cmd).getParamTypes();
         ArrayList<Object> params = new ArrayList<Object>();
 
         for (Class c : paramTypes) {
+            required = (c.equals(Point.class)) ? 2 : 1; // Point needs 2, everything else needs 1
+            if (counter + required - 1 >= args.length) {
+                System.err.println("!! Incorrect number of arguments provided");
+                return null;
+            }
             if (c.equals(Point.class)) {
                 params.add(new Point(Integer.parseInt(args[counter]), Integer.parseInt(args[counter + 1])));
                 counter += 2;
@@ -216,7 +223,7 @@ public class Interpreter {
                 params.add(args[counter].toString());
                 counter++;
             } else {
-                System.err.println("Unrecognized parameter type! Fix dictionary!");
+                System.err.println("!! Unrecognized parameter type! Fix dictionary!");
                 System.exit(-1);
             }
         }
@@ -225,7 +232,7 @@ public class Interpreter {
     }
 
     public Object[] getParams(String cmd, String args) {
-        System.out.printf("Getting parameters for [%s]\n", args);
+        System.out.printf(">> Getting parameters for [%s]\n", args);
         return getParams(cmd, args.split(" "));
     }
 
