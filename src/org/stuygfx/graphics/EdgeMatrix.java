@@ -80,7 +80,7 @@ public class EdgeMatrix {
             @Override
             public Double get(double t) {
                 return xOut.data[0][0] * Math.pow(t, 3) + xOut.data[0][1] * Math.pow(t, 2) + xOut.data[0][2] * t
-                        + xOut.data[0][3];
+                    + xOut.data[0][3];
             }
         };
 
@@ -88,7 +88,7 @@ public class EdgeMatrix {
             @Override
             public Double get(double t) {
                 return yOut.data[0][0] * Math.pow(t, 3) + yOut.data[0][1] * Math.pow(t, 2) + yOut.data[0][2] * t
-                        + yOut.data[0][3];
+                    + yOut.data[0][3];
             }
         };
 
@@ -96,12 +96,12 @@ public class EdgeMatrix {
     }
 
     public void addBezierCurve(final Double x0, final Double y0, final Double x1, final Double y1, final Double x2,
-            final Double y2, final Double x3, final Double y3) {
+        final Double y2, final Double x3, final Double y3) {
         Parametric x = new Parametric() {
             @Override
             public Double get(double t) {
                 return x0 * Math.pow(1 - t, 3) + 3 * x1 * Math.pow(1 - t, 2) * t + 3 * x2 * (1 - t) * Math.pow(t, 2)
-                        + x3 * Math.pow(t, 3);
+                    + x3 * Math.pow(t, 3);
             }
         };
 

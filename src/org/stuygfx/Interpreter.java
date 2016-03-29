@@ -11,6 +11,7 @@ import org.stuygfx.graphics.Image;
 import org.stuygfx.graphics.Pixel;
 import org.stuygfx.graphics.Point;
 import org.stuygfx.math.MasterTransformationMatrix;
+import org.stuygfx.math.Transformations;
 
 public class Interpreter {
 
@@ -80,12 +81,16 @@ public class Interpreter {
         }
     }
 
-    public void apply() {
+    private void draw() {
         Draw.edgeMatrix(canvas, new Pixel(0, 255, 0), em);
     }
 
+    public void apply() {
+        Transformations.applyTransformation(masterTrans, em);
+    }
+
     public void save(String filename) {
-        apply();
+        draw();
         try {
             PPMGenerator.createPPM(filename, canvas);
         } catch (IOException e) {
@@ -189,6 +194,9 @@ public class Interpreter {
                 counter += 2;
             } else if (c.equals(Double.class)) {
                 params.add(Double.parseDouble(args[counter]));
+                counter++;
+            } else if (c.equals(Integer.class)) {
+                params.add(Integer.parseInt(args[counter]));
                 counter++;
             } else {
                 System.err.println("Unrecognized parameter type! Fix dictionary!");
