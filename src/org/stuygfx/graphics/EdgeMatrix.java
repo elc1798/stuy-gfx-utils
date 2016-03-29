@@ -151,12 +151,14 @@ public class EdgeMatrix {
     }
 
     public void addSphere(Double cx, Double cy, Double cz, Double radius) {
+        double x, y, z;
+
         for (double p = 0; p < CEILING; p += STEP) {
             for (double t = 0; t < CEILING; t += STEP) {
-                double x = radius * Math.cos(t * Math.PI);
-                double y = radius * Math.sin(t * Math.PI) * Math.cos(p * 2 * Math.PI);
-                double z = radius * Math.sin(t * Math.PI) * Math.sin(p * 2 * Math.PI);
-                addPoint(new Point((int)x, (int)y, (int)z));
+                x = radius * Math.cos(t * Math.PI);
+                y = radius * Math.sin(t * Math.PI) * Math.cos(p * 2 * Math.PI);
+                z = radius * Math.sin(t * Math.PI) * Math.sin(p * 2 * Math.PI);
+                addPoint(new Point((int) x, (int) y, (int) z));
             }
         }
     }
