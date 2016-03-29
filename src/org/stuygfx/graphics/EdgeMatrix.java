@@ -1,5 +1,8 @@
 package org.stuygfx.graphics;
 
+import static org.stuygfx.CONSTANTS.CEILING;
+import static org.stuygfx.CONSTANTS.STEP;
+
 import java.util.ArrayList;
 
 import org.stuygfx.math.Matrix;
@@ -33,12 +36,10 @@ public class EdgeMatrix {
     public void addParametric(Parametric xFunc, Parametric yFunc) {
         double x0, y0, x, y;
 
-        double CEILING = 1.0001;
-        double step = 0.0025;
         x0 = xFunc.get(0);
         y0 = yFunc.get(0);
 
-        for (double t = step; t < CEILING; t += step) {
+        for (double t = STEP; t < CEILING; t += STEP) {
             x = xFunc.get(t);
             y = yFunc.get(t);
 
