@@ -1,0 +1,12 @@
+box
+10 10 10 100 100 80
+ident
+xrotate
+20
+yrotate
+20
+translate
+50 50 0
+apply
+display
+quit
