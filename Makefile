@@ -11,5 +11,5 @@ recompile: build.xml jar-in-jar-loader.zip
 	@ant
 
 run: StuyGFX.jar
-	@java -jar StuyGFX.jar script.pgi
+	@java -jar StuyGFX.jar 3d.pgi
 
