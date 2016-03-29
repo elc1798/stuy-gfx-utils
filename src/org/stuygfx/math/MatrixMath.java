@@ -2,44 +2,42 @@ package org.stuygfx.math;
 
 public class MatrixMath {
 
-    public static double dotProduct(Matrix m1, Matrix m2) {
-        assert (m1.rows() == 1 && m2.rows() == 1);
-        assert (m1.cols() == m2.cols());
+    public static double dotProduct(double[][] m1, double[][] m2) {
+        assert (m1.length == 1 && m2.length == 1);
+        assert (m1[0].length == m2[0].length);
         double sum = 0.0;
-        for (int i = 0; i < m1.cols(); i++) {
-            sum += m1.data[0][i] * m2.data[0][i];
+        for (int i = 0; i < m1[0].length; i++) {
+            sum += m1[0][i] * m2[0][i];
         }
         return sum;
     }
 
-    public static double dotProduct(double[][] m1, double[][] m2) {
-        return dotProduct(new Matrix(m1), new Matrix(m2));
-    }
-
-    public static Matrix crossProduct(Matrix m1, Matrix m2) {
-        assert (m1.cols() == m2.rows());
-        Matrix crossProd = new Matrix(m1.rows(), m2.cols());
-        for (int i = 0; i < m1.rows(); i++) {
-            for (int j = 0; j < m2.cols(); j++) {
-                // Construct temporary mats to dot product with
-                Matrix tmp1 = new Matrix(1, m1.cols());
-                for (int k = 0; k < m1.cols(); k++) {
-                    tmp1.data[0][k] = m1.data[i][k];
-                }
-
-                Matrix tmp2 = new Matrix(1, m2.rows());
-                for (int k = 0; k < m2.rows(); k++) {
-                    tmp2.data[0][k] = m2.data[k][j];
-                }
-
-                crossProd.data[i][j] = dotProduct(tmp1, tmp2);
-            }
-        }
-        return crossProd;
+    public static double dotProduct(Matrix m1, Matrix m2) {
+        return dotProduct(m1.data, m2.data);
     }
 
     public static Matrix crossProduct(double[][] m1, double[][] m2) {
-        return crossProduct(new Matrix(m1), new Matrix(m2));
+        assert (m1[0].length == m2.length);
+        double[][] crossProd = new double[m1.length][m2[0].length];
+        for (int i = 0; i < m1.length; i++) {
+            for (int j = 0; j < m2[0].length; j++) {
+                double[][] tmp1 = new double[1][m1[0].length];
+                for (int k = 0; k < m1[0].length; k++) {
+                    tmp1[0][k] = m1[i][k];
+                }
+
+                double[][] tmp2 = new double[1][m2.length];
+                for (int k = 0; k < m2.length; k++) {
+                    tmp2[0][k] = m2[k][j];
+                }
+                crossProd[i][j] = dotProduct(tmp1, tmp2);
+            }
+        }
+        return new Matrix(crossProd);
+    }
+
+    public static Matrix crossProduct(Matrix m1, Matrix m2) {
+        return crossProduct(m1.data, m2.data);
     }
 
     public static void scalarMultiplyInPlace(Matrix m, int factor) {
