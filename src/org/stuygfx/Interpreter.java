@@ -144,6 +144,10 @@ public class Interpreter {
             Double.class, Double.class, Double.class, Double.class
         });
 
+        addEdgeMatrixOp("torus", "addTorus", new Class[] {
+            Double.class, Double.class, Double.class, Double.class, Double.class
+        });
+
         addTransformOp("ident", "reset", new Class[] {});
 
         addTransformOp("scale", "addScale", new Class[] {

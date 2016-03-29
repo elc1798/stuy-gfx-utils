@@ -162,4 +162,17 @@ public class EdgeMatrix {
             }
         }
     }
+
+    public void addTorus(Double cx, Double cy, Double cz, Double r1, Double r2) {
+        double x, y, z;
+
+        for (float p = 0; p < CEILING; p += STEP) {
+            for (float t = 0; t < CEILING; t += STEP) {
+                x = r1 * Math.cos(t * 2 * Math.PI);
+                y = Math.cos(p * 2 * Math.PI) * (r1 * Math.sin(t * 2 * Math.PI) + r2);
+                z = Math.sin(p * 2 * Math.PI) * (r1 * Math.sin(t * 2 * Math.PI) + r2);
+                addPoint(new Point((int) x, (int) y, (int) z));
+            }
+        }
+    }
 }

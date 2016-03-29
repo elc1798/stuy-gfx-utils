@@ -2,6 +2,8 @@ box
 10 10 10 100 100 80
 sphere
 150 150 0 200
+torus
+150 150 0 300 350
 ident
 xrotate
 20
