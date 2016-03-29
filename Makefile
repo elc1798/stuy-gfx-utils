@@ -11,6 +11,5 @@ recompile: build.xml jar-in-jar-loader.zip
 	@ant
 
 run: StuyGFX.jar
-	@java -jar StuyGFX.jar
-	@display test.ppm
+	@java -jar StuyGFX.jar script.pgi
 
