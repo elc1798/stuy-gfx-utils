@@ -140,6 +140,10 @@ public class Interpreter {
             Integer.class, Integer.class, Integer.class, Integer.class, Integer.class, Integer.class
         });
 
+        addEdgeMatrixOp("sphere", "addSphere", new Class[] {
+            Double.class, Double.class, Double.class, Double.class
+        });
+
         addTransformOp("ident", "reset", new Class[] {});
 
         addTransformOp("scale", "addScale", new Class[] {
