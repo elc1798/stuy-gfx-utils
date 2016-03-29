@@ -1,16 +1,20 @@
-box
-10 10 10 100 100 80
 sphere
-150 150 0 200
+384 384 0 84
+sphere
+128 384 0 84
 torus
-150 150 0 300 350
+256 256 0 10 80
+box
+0 0 0 511 511 511
 ident
 xrotate
-20
+10
 yrotate
-20
-translate
-50 50 0
+10
+zrotate
+10
 apply
+save
+rendered.ppm
 display
 quit

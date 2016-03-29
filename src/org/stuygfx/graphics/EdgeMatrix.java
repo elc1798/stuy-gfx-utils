@@ -155,9 +155,9 @@ public class EdgeMatrix {
 
         for (double p = 0; p < CEILING; p += STEP) {
             for (double t = 0; t < CEILING; t += STEP) {
-                x = radius * Math.cos(t * Math.PI);
-                y = radius * Math.sin(t * Math.PI) * Math.cos(p * 2 * Math.PI);
-                z = radius * Math.sin(t * Math.PI) * Math.sin(p * 2 * Math.PI);
+                x = radius * Math.cos(t * Math.PI) + cx;
+                y = radius * Math.sin(t * Math.PI) * Math.cos(p * 2 * Math.PI) + cy;
+                z = radius * Math.sin(t * Math.PI) * Math.sin(p * 2 * Math.PI) + cz;
                 addPoint(new Point((int) x, (int) y, (int) z));
             }
         }
@@ -168,9 +168,9 @@ public class EdgeMatrix {
 
         for (float p = 0; p < CEILING; p += STEP) {
             for (float t = 0; t < CEILING; t += STEP) {
-                x = r1 * Math.cos(t * 2 * Math.PI);
-                y = Math.cos(p * 2 * Math.PI) * (r1 * Math.sin(t * 2 * Math.PI) + r2);
-                z = Math.sin(p * 2 * Math.PI) * (r1 * Math.sin(t * 2 * Math.PI) + r2);
+                x = r1 * Math.cos(t * 2 * Math.PI) + cx;
+                y = Math.cos(p * 2 * Math.PI) * (r1 * Math.sin(t * 2 * Math.PI) + r2) + cy;
+                z = Math.sin(p * 2 * Math.PI) * (r1 * Math.sin(t * 2 * Math.PI) + r2) + cz;
                 addPoint(new Point((int) x, (int) y, (int) z));
             }
         }

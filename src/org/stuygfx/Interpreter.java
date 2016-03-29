@@ -212,6 +212,9 @@ public class Interpreter {
             } else if (c.equals(Integer.class)) {
                 params.add(Integer.parseInt(args[counter]));
                 counter++;
+            } else if (c.equals(String.class)) {
+                params.add(args[counter].toString());
+                counter++;
             } else {
                 System.err.println("Unrecognized parameter type! Fix dictionary!");
                 System.exit(-1);

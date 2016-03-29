@@ -4,6 +4,7 @@ public class MasterTransformationMatrix extends Matrix {
 
     public MasterTransformationMatrix() {
         super(4, 4);
+        reset();
     }
 
     public MasterTransformationMatrix(int rows, int cols) {
