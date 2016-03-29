@@ -134,6 +134,12 @@ public class Interpreter {
             Double.class
         });
 
+        addEdgeMatrixOp("clear", "empty", new Class[] {});
+
+        addEdgeMatrixOp("box", "addBox", new Class[] {
+            Integer.class, Integer.class, Integer.class, Integer.class, Integer.class, Integer.class
+        });
+
         addTransformOp("ident", "reset", new Class[] {});
 
         addTransformOp("scale", "addScale", new Class[] {

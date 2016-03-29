@@ -67,11 +67,29 @@ public class EdgeMatrix {
     }
 
     public void addHermiteCurve(Double x0, Double y0, Double dx0, Double dy0, Double x1, Double y1, Double dx1,
-            Double dy1) {
-        double[][] xIn = { { x0, dx0, x1, dx1 } };
-        double[][] yIn = { { y0, dy0, y1, dy1 } };
+        Double dy1) {
+        double[][] xIn = {
+            {
+                x0, dx0, x1, dx1
+            }
+        };
+        double[][] yIn = {
+            {
+                y0, dy0, y1, dy1
+            }
+        };
 
-        double[][] inverse = { { 2, -2, 1, 1 }, { -3, 3, -2, -1 }, { 0, 0, 1, 0 }, { 1, 0, 0, 0 } };
+        double[][] inverse = {
+            {
+                2, -2, 1, 1
+            }, {
+                -3, 3, -2, -1
+            }, {
+                0, 0, 1, 0
+            }, {
+                1, 0, 0, 0
+            }
+        };
 
         final Matrix xOut = MatrixMath.crossProduct(xIn, inverse);
         final Matrix yOut = MatrixMath.crossProduct(yIn, inverse);
@@ -109,10 +127,25 @@ public class EdgeMatrix {
             @Override
             public Double get(double t) {
                 return y0 * Math.pow(1 - t, 3) + 3 * y1 * Math.pow(1 - t, 2) * t + 3 * y2 * (1 - t) * Math.pow(t, 2)
-                        + y3 * Math.pow(t, 3);
+                    + y3 * Math.pow(t, 3);
             }
         };
 
         addParametric(x, y);
+    }
+
+    public void addBox(Integer x, Integer y, Integer z, Integer dx, Integer dy, Integer dz) {
+        addEdge(new Point(x, y, z), new Point(x, y, z + dz));
+        addEdge(new Point(x, y, z), new Point(x + dx, y, z));
+        addEdge(new Point(x, y, z), new Point(x, y + dy, z));
+        addEdge(new Point(x, y, z + dz), new Point(x + dx, y, z + dz));
+        addEdge(new Point(x + dx, y, z), new Point(x + dx, y, z + dz));
+        addEdge(new Point(x + dx, y, z + dz), new Point(x + dx, y + dy, z + dz));
+        addEdge(new Point(x, y + dy, z), new Point(x, y + dy, z + dz));
+        addEdge(new Point(x, y + dy, z + dz), new Point(x + dx, y + dy, z + dz));
+        addEdge(new Point(x, y + dy, z), new Point(x + dx, y + dy, z));
+        addEdge(new Point(x + dx, y + dy, z + dz), new Point(x + dx, y + dy, z));
+        addEdge(new Point(x, y, z + dz), new Point(x, y + dy, z + dz));
+        addEdge(new Point(x + dx, y, z), new Point(x + dx, y + dy, z));
     }
 }
