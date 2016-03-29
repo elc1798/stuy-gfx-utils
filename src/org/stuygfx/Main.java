@@ -1,42 +1,37 @@
 package org.stuygfx;
 
+import java.io.File;
 import java.io.IOException;
-
-import org.stuygfx.graphics.Draw;
-import org.stuygfx.graphics.EdgeMatrix;
-import org.stuygfx.graphics.Image;
-import org.stuygfx.graphics.Pixel;
-import org.stuygfx.graphics.Point;
-import org.stuygfx.math.Matrix;
-import org.stuygfx.math.MatrixMath;
-import org.stuygfx.math.Transformations;
+import java.util.Scanner;
 
 public class Main {
 
+    private static Interpreter interpreter;
+    private static Scanner sc;
+    private static String currCommand;
+    private static Object[] currArgs;
+
     public static void main(String[] args) throws IOException {
-        Image img = new Image();
-        img.shouldRelectOverX(true);
 
-        Point center = new Point(img.XRES / 2, img.YRES / 2);
-        Pixel green = new Pixel(0, 255, 0);
-        Pixel red = new Pixel(255, 0, 0);
+        interpreter = new Interpreter();
 
-        Interpreter interpreter = new Interpreter();
-        String testLine = "0 0 255 255";
-        interpreter.call("line", interpreter.getParams("line", testLine));
+        if (args.length == 0) {
+            sc = new Scanner(System.in);
+        } else {
+            sc = new Scanner(new File(args[0]));
+        }
 
-        String testCirc = "255 255 50";
-        interpreter.call("circle", interpreter.getParams("circle", testCirc));
+        while (sc.hasNextLine()) {
+            currCommand = sc.nextLine();
+            if (interpreter.hasNoParams(currCommand)) {
+                currArgs = CONSTANTS.NO_ARGS;
+            } else {
+                currArgs = interpreter.getParams(currCommand, sc.nextLine());
+            }
+            System.out.printf("Calling %s with %d parameters\n", currCommand, currArgs.length);
+            interpreter.call(currCommand, currArgs);
+        }
 
-        String testHermite = "150 150 150 50 350 150 350 300";
-        interpreter.call("hermite", interpreter.getParams("hermite", testHermite));
-
-        String testBezier = "0 0 256 0 256 512 512 512";
-        interpreter.call("bezier", interpreter.getParams("bezier", testBezier));
-
-        Draw.edgeMatrix(interpreter.canvas, green, interpreter.em);
-
-        PPMGenerator.createPPM("test.ppm", interpreter.canvas);
         System.gc();
     }
 

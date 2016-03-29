@@ -1,20 +1,22 @@
 package org.stuygfx;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.stuygfx.graphics.Draw;
 import org.stuygfx.graphics.EdgeMatrix;
 import org.stuygfx.graphics.Image;
+import org.stuygfx.graphics.Pixel;
 import org.stuygfx.graphics.Point;
 import org.stuygfx.math.MasterTransformationMatrix;
-import org.stuygfx.math.Matrix;
 
 public class Interpreter {
 
     private final ConcurrentHashMap<String, Command> fxnMapper;
-    public Image canvas;
-    public EdgeMatrix em;
+    private Image canvas;
+    private EdgeMatrix em;
     private MasterTransformationMatrix masterTrans;
 
     private class Command {
@@ -36,6 +38,7 @@ public class Interpreter {
             }
         }
 
+        @SuppressWarnings("rawtypes")
         public Class[] getParamTypes() {
             return this.func.getParameterTypes();
         }
@@ -55,26 +58,106 @@ public class Interpreter {
         fxnMapper.put(key, cmd);
     }
 
-    public void initializeDefinitions() {
+    @SuppressWarnings("rawtypes")
+    private void addEdgeMatrixOp(String key, String fxnName, Class[] paramTypes) {
         try {
+            addDef(key, new Command(em, EdgeMatrix.class.getMethod(fxnName, paramTypes)));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+    }
 
-            addDef("line", new Command(em, EdgeMatrix.class.getMethod("addEdge", new Class[] {
-                    Point.class, Point.class
-            })));
+    @SuppressWarnings("rawtypes")
+    private void addTransformOp(String key, String fxnName, Class[] paramTypes) {
+        try {
+            addDef(key, new Command(masterTrans, MasterTransformationMatrix.class.getMethod(fxnName, paramTypes)));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+    }
 
-            addDef("circle", new Command(em, EdgeMatrix.class.getMethod("addCircle", new Class[] {
-                    Point.class, Double.class
-            })));
+    public void apply() {
+        Draw.edgeMatrix(canvas, new Pixel(0, 255, 0), em);
+    }
 
-            addDef("hermite", new Command(em, EdgeMatrix.class.getMethod("addHermiteCurve", new Class[] {
-                    Double.class, Double.class, Double.class, Double.class, Double.class, Double.class, Double.class,
-                    Double.class
-            })));
+    public void save(String filename) {
+        apply();
+        try {
+            PPMGenerator.createPPM(filename, canvas);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+    }
 
-            addDef("bezier", new Command(em, EdgeMatrix.class.getMethod("addBezierCurve", new Class[] {
-                    Double.class, Double.class, Double.class, Double.class, Double.class, Double.class, Double.class,
-                    Double.class
+    public void display() {
+        save(CONSTANTS.TMP_FILE_NAME);
+        try {
+            Runtime.getRuntime().exec("display " + CONSTANTS.TMP_FILE_NAME).waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void cleanup() {
+        System.gc();
+        System.exit(0);
+    }
+
+    public void initializeDefinitions() {
+        addEdgeMatrixOp("line", "addEdge", new Class[] {
+            Point.class, Point.class
+        });
+
+        addEdgeMatrixOp("circle", "addCircle", new Class[] {
+            Point.class, Double.class
+        });
+
+        addEdgeMatrixOp("hermite", "addHermiteCurve", new Class[] {
+            Double.class, Double.class, Double.class, Double.class, Double.class, Double.class, Double.class,
+            Double.class
+        });
+
+        addEdgeMatrixOp("bezier", "addBezierCurve", new Class[] {
+            Double.class, Double.class, Double.class, Double.class, Double.class, Double.class, Double.class,
+            Double.class
+        });
+
+        addTransformOp("ident", "reset", new Class[] {});
+
+        addTransformOp("scale", "addScale", new Class[] {
+            Double.class, Double.class, Double.class
+        });
+
+        addTransformOp("translate", "addTranslate", new Class[] {
+            Integer.class, Integer.class, Integer.class
+        });
+
+        addTransformOp("xrotate", "addRotX", new Class[] {
+            Double.class
+        });
+
+        addTransformOp("yrotate", "addRotY", new Class[] {
+            Double.class
+        });
+
+        addTransformOp("zrotate", "addRotZ", new Class[] {
+            Double.class
+        });
+
+        try {
+            addDef("apply", new Command(this, Interpreter.class.getMethod("apply", new Class[] {})));
+            addDef("save", new Command(this, Interpreter.class.getMethod("save", new Class[] {
+                String.class
             })));
+            addDef("display", new Command(this, Interpreter.class.getMethod("display", new Class[] {})));
+            addDef("quit", new Command(this, Interpreter.class.getMethod("cleanup", new Class[] {})));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (SecurityException e) {
@@ -90,6 +173,7 @@ public class Interpreter {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     public Object[] getParams(String cmd, String[] args) {
         if (!fxnMapper.containsKey(cmd)) {
             return null;
@@ -116,6 +200,11 @@ public class Interpreter {
     }
 
     public Object[] getParams(String cmd, String args) {
+        System.out.printf("Getting parameters for [%s]\n", args);
         return getParams(cmd, args.split(" "));
+    }
+
+    public boolean hasNoParams(String cmd) {
+        return fxnMapper.get(cmd).getParamTypes().length == 0;
     }
 }
