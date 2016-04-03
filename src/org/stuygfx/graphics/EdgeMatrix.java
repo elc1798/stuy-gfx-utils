@@ -69,11 +69,13 @@ public class EdgeMatrix {
 
     public void addHermiteCurve(Double x0, Double y0, Double dx0, Double dy0, Double x1, Double y1, Double dx1,
         Double dy1) {
+
         double[][] xIn = {
             {
                 x0, dx0, x1, dx1
             }
         };
+
         double[][] yIn = {
             {
                 y0, dy0, y1, dy1
