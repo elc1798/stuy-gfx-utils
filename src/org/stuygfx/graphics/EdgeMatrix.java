@@ -155,11 +155,13 @@ public class EdgeMatrix {
     public void addSphere(Double cx, Double cy, Double cz, Double radius) {
         double x, y, z;
 
-        for (double p = 0; p < CEILING; p += STEP) {
-            for (double t = 0; t < CEILING; t += STEP) {
-                x = radius * Math.cos(t * Math.PI) + cx;
-                y = radius * Math.sin(t * Math.PI) * Math.cos(p * 2 * Math.PI) + cy;
-                z = radius * Math.sin(t * Math.PI) * Math.sin(p * 2 * Math.PI) + cz;
+        for (int p = 0; p < 100; p++) {
+            double rot = (double) p / 100;
+            for (int t = 0; t < 100; t++) {
+                double circ = (double) t / 100;
+                x = radius * Math.cos(2 * Math.PI * circ) + cx;
+                y = radius * Math.sin(2 * Math.PI * circ) * Math.cos(rot * 2 * Math.PI) + cy;
+                z = radius * Math.sin(2 * Math.PI * circ) * Math.sin(rot * 2 * Math.PI) + cz;
                 addPoint(new Point((int) x, (int) y, (int) z));
             }
         }
@@ -168,11 +170,13 @@ public class EdgeMatrix {
     public void addTorus(Double cx, Double cy, Double cz, Double r1, Double r2) {
         double x, y, z;
 
-        for (float p = 0; p < CEILING; p += STEP) {
-            for (float t = 0; t < CEILING; t += STEP) {
-                x = r1 * Math.cos(t * 2 * Math.PI) + cx;
-                y = Math.cos(p * 2 * Math.PI) * (r1 * Math.sin(t * 2 * Math.PI) + r2) + cy;
-                z = Math.sin(p * 2 * Math.PI) * (r1 * Math.sin(t * 2 * Math.PI) + r2) + cz;
+        for (int p = 0; p < 100; p++) {
+            double rot = (double) p / 100;
+            for (int t = 0; t < 100; t ++) {
+                double circ = (double) t / 100;
+                x = Math.cos(rot * 2 * Math.PI) * (r1 * Math.cos(circ * 2 * Math.PI) + r2) + cx;
+                y = r1 * Math.sin(circ * 2 * Math.PI) + cy;
+                z = Math.sin(rot * 2 * Math.PI) * (r1 * Math.cos(circ * 2 * Math.PI) + r2) + cz;
                 addPoint(new Point((int) x, (int) y, (int) z));
             }
         }
