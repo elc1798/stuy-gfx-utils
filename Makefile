@@ -10,6 +10,9 @@ help:
 recompile: build.xml jar-in-jar-loader.zip
 	@ant
 
+interpreter: StuyGFX.jar
+	@java -jar StuyGFX.jar
+
 run: StuyGFX.jar
 	@java -jar StuyGFX.jar 3d.pgi
 
