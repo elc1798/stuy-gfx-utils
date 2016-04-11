@@ -28,7 +28,17 @@ public class Point {
     }
 
     public Matrix toMatrix() {
-        double[][] values = { { this.x }, { this.y }, { this.z }, { 1 } };
+        double[][] values = {
+            {
+                this.x
+            }, {
+                this.y
+            }, {
+                this.z
+            }, {
+                1
+            }
+        };
         return new Matrix(values);
     }
 
@@ -37,5 +47,9 @@ public class Point {
         this.x = (int) m.data[0][0];
         this.y = (int) m.data[1][0];
         this.z = (int) m.data[2][0];
+    }
+
+    public Point clone() {
+        return new Point(this.x, this.y, this.z);
     }
 }

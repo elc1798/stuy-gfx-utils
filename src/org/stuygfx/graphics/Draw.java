@@ -148,9 +148,11 @@ public class Draw {
 
     public static void polygonMatrix(Image pic, Pixel color, PolygonMatrix pm) {
         for (Triangle t : pm.polygons) {
-            line(pic, color, t.p1, t.p2);
-            line(pic, color, t.p1, t.p3);
-            line(pic, color, t.p2, t.p3);
+            if (t.shouldDraw()) {
+                line(pic, color, t.p1, t.p2);
+                line(pic, color, t.p1, t.p3);
+                line(pic, color, t.p2, t.p3);
+            }
         }
     }
 }

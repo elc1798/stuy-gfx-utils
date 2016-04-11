@@ -33,7 +33,7 @@ public class Image {
         initializeCanvas();
     }
 
-    private void initializeCanvas() {
+    public void initializeCanvas() {
         for (int i = 0; i < this.canvas.length; i++) {
             for (int j = 0; j < this.canvas[0].length; j++) {
                 this.canvas[i][j] = new Pixel();
@@ -60,22 +60,22 @@ public class Image {
 
     public void plot(Point p, Pixel color) {
         try {
-        if (reflectOverX) {
-            this.canvas[(this.YRES - 1) - (p.y + originY)][p.x + originX] = color;
-        } else {
-            this.canvas[p.y + originY][p.x + originX] = color;
-        }
+            if (reflectOverX) {
+                this.canvas[(this.YRES - 1) - (p.y + originY)][p.x + originX] = color;
+            } else {
+                this.canvas[p.y + originY][p.x + originX] = color;
+            }
         } catch (IndexOutOfBoundsException e) {
         }
     }
 
     public void plot(int x, int y, Pixel color) {
         try {
-        if (reflectOverX) {
-            this.canvas[(this.YRES - 1) - (y + originY)][x + originX] = color;
-        } else {
-            this.canvas[y + originY][x + originX] = color;
-        }
+            if (reflectOverX) {
+                this.canvas[(this.YRES - 1) - (y + originY)][x + originX] = color;
+            } else {
+                this.canvas[y + originY][x + originX] = color;
+            }
         } catch (IndexOutOfBoundsException e) {
         }
     }

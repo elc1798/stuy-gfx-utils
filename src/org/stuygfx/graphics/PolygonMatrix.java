@@ -36,38 +36,40 @@ public class PolygonMatrix {
         Point P7 = new Point(x, y + dy, z + dz);
         Point P8 = new Point(x + dx, y + dy, z + dz);
         // Front
-        addTriangle(P1, P2, P3);
-        addTriangle(P3, P4, P1);
+        addTriangle(P1.clone(), P2.clone(), P3.clone());
+        addTriangle(P3.clone(), P4.clone(), P1.clone());
         // Up
-        addTriangle(P4, P3, P8);
-        addTriangle(P8, P7, P4);
+        addTriangle(P4.clone(), P3.clone(), P8.clone());
+        addTriangle(P8.clone(), P7.clone(), P4.clone());
         // Right
-        addTriangle(P2, P5, P8);
-        addTriangle(P8, P3, P2);
+        addTriangle(P2.clone(), P5.clone(), P8.clone());
+        addTriangle(P8.clone(), P3.clone(), P2.clone());
         // Left
-        addTriangle(P6, P1, P4);
-        addTriangle(P4, P7, P6);
+        addTriangle(P6.clone(), P1.clone(), P4.clone());
+        addTriangle(P4.clone(), P7.clone(), P6.clone());
         // Down
-        addTriangle(P6, P5, P2);
-        addTriangle(P2, P1, P6);
+        addTriangle(P6.clone(), P5.clone(), P2.clone());
+        addTriangle(P2.clone(), P1.clone(), P6.clone());
         // Back
-        addTriangle(P5, P6, P7);
-        addTriangle(P7, P8, P5);
+        addTriangle(P5.clone(), P6.clone(), P7.clone());
+        addTriangle(P7.clone(), P8.clone(), P5.clone());
     }
 
     public void addSphere(Double cx, Double cy, Double cz, Double radius, Integer res) {
         EdgeMatrix spherePoints = new EdgeMatrix();
         spherePoints.addSphere(cx, cy, cz, radius);
         Edge[] points = (Edge[]) spherePoints.edges.toArray(new Edge[0]);
-        for (int i = 0; i < points.length; i += res + 1) {
-            for (int j = 0; j < res; j++) {
+        res += 1;
+        res += points.length % res;
+        for (int i = 0; i < points.length; i += res) {
+            for (int j = 0; j < res - 1; j++) {
                 addTriangle(points[(i + j) % points.length].start,
-                    points[(i + res + 1 + ((j + 1) % (res + 1))) % points.length].start,
-                    points[(i + j + res + 1) % points.length].start
+                    points[(i + res + ((j + 1) % res)) % points.length].start,
+                    points[(i + j + res) % points.length].start
                     );
                 addTriangle(points[(i + j) % points.length].start,
-                    points[(i + ((j + 1) % (res + 1))) % points.length].start,
-                    points[(i + res + 1 + ((j + 1) % (res + 1))) % points.length].start);
+                    points[(i + ((j + 1) % res)) % points.length].start,
+                    points[(i + res + ((j + 1) % res)) % points.length].start);
             }
         }
     }
