@@ -168,6 +168,10 @@ public class Interpreter {
             Double.class, Double.class, Double.class, Double.class, Integer.class
         });
 
+        addPolygonMatrixOp("box_mesh", "addRectPrism", new Class[] {
+            Integer.class, Integer.class, Integer.class, Integer.class, Integer.class, Integer.class
+        });
+
         addTransformOp("ident", "reset", new Class[] {});
 
         addTransformOp("scale", "addScale", new Class[] {
