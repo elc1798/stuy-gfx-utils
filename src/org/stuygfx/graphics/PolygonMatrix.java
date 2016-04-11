@@ -55,6 +55,20 @@ public class PolygonMatrix {
         addTriangle(P7, P8, P5);
     }
 
-    public void addSphere() {
+    public void addSphere(Double cx, Double cy, Double cz, Double radius, int res) {
+        EdgeMatrix spherePoints = new EdgeMatrix();
+        spherePoints.addSphere(cx, cy, cz, radius);
+        Edge[] points = (Edge[]) spherePoints.edges.toArray();
+        for (int i = 0; i < points.length; i += res + 1) {
+            for (int j = 0; j < res; j++) {
+                addTriangle(points[(i + j) % points.length].start,
+                    points[(i + res + 1 + ((j + 1) % (res + 1))) % points.length].start,
+                    points[(i + j + res + 1) % points.length].start
+                    );
+                addTriangle(points[(i + j) % points.length].start,
+                    points[(i + ((j + 1) % (res + 1))) % points.length].start,
+                    points[(i + res + 1 + ((j + 1) % (res + 1))) % points.length].start);
+            }
+        }
     }
 }
