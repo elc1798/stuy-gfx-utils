@@ -7,9 +7,9 @@ import org.stuygfx.math.MatrixMath;
 
 public class Triangle {
 
-    private Point p1;
-    private Point p2;
-    private Point p3;
+    public Point p1;
+    public Point p2;
+    public Point p3;
 
     public Triangle(Point p1, Point p2, Point p3) {
         this.p1 = p1;
@@ -28,7 +28,7 @@ public class Triangle {
      * 
      * @return true if 90 <= theta <= 270
      */
-    public boolean isFacingOutwards() {
+    public boolean shouldDraw() {
         Matrix A = new Matrix(new double[][] {
             {
                 p2.x - p1.x, p2.y - p1.y, p2.z - p1.z
@@ -43,5 +43,4 @@ public class Triangle {
         double cosTheta = MatrixMath.dotProduct(N, DEFAULT_VIEW_VEC) / MatrixMath.magnitude(N);
         return cosTheta <= 0.0;
     }
-
 }

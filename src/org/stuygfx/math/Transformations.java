@@ -4,6 +4,8 @@ import static org.stuygfx.math.MatrixMath.identityMatrix;
 
 import org.stuygfx.graphics.Edge;
 import org.stuygfx.graphics.EdgeMatrix;
+import org.stuygfx.graphics.PolygonMatrix;
+import org.stuygfx.graphics.Triangle;
 
 public class Transformations {
 
@@ -48,6 +50,14 @@ public class Transformations {
         for (Edge e : em.edges) {
             e.start.fromMatrix(MatrixMath.crossProduct(transMatrix, e.start.toMatrix()));
             e.end.fromMatrix(MatrixMath.crossProduct(transMatrix, e.end.toMatrix()));
+        }
+    }
+
+    public static void applyTransformation(Matrix transMatrix, PolygonMatrix pm) {
+        for (Triangle t : pm.polygons) {
+            t.p1.fromMatrix(MatrixMath.crossProduct(transMatrix, t.p1.toMatrix()));
+            t.p2.fromMatrix(MatrixMath.crossProduct(transMatrix, t.p2.toMatrix()));
+            t.p3.fromMatrix(MatrixMath.crossProduct(transMatrix, t.p3.toMatrix()));
         }
     }
 }

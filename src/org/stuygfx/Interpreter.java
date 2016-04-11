@@ -10,6 +10,7 @@ import org.stuygfx.graphics.EdgeMatrix;
 import org.stuygfx.graphics.Image;
 import org.stuygfx.graphics.Pixel;
 import org.stuygfx.graphics.Point;
+import org.stuygfx.graphics.PolygonMatrix;
 import org.stuygfx.math.MasterTransformationMatrix;
 import org.stuygfx.math.Transformations;
 
@@ -18,6 +19,7 @@ public class Interpreter {
     private final ConcurrentHashMap<String, Command> fxnMapper;
     private Image canvas;
     private EdgeMatrix em;
+    private PolygonMatrix pm;
     private MasterTransformationMatrix masterTrans;
 
     private class Command {
@@ -50,6 +52,7 @@ public class Interpreter {
         canvas = new Image();
         canvas.shouldRelectOverX(true);
         em = new EdgeMatrix();
+        pm = new PolygonMatrix();
         masterTrans = new MasterTransformationMatrix();
 
         initializeDefinitions();
@@ -71,6 +74,17 @@ public class Interpreter {
     }
 
     @SuppressWarnings("rawtypes")
+    private void addPolygonMatrixOp(String key, String fxnName, Class[] paramTypes) {
+        try {
+            addDef(key, new Command(pm, PolygonMatrix.class.getMethod(fxnName, paramTypes)));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
     private void addTransformOp(String key, String fxnName, Class[] paramTypes) {
         try {
             addDef(key, new Command(masterTrans, MasterTransformationMatrix.class.getMethod(fxnName, paramTypes)));
@@ -83,10 +97,12 @@ public class Interpreter {
 
     private void draw() {
         Draw.edgeMatrix(canvas, new Pixel(0, 255, 0), em);
+        Draw.polygonMatrix(canvas, new Pixel(0, 255, 0), pm);
     }
 
     public void apply() {
         Transformations.applyTransformation(masterTrans, em);
+        Transformations.applyTransformation(masterTrans, pm);
     }
 
     public void save(String filename) {
@@ -148,6 +164,10 @@ public class Interpreter {
             Double.class, Double.class, Double.class, Double.class, Double.class
         });
 
+        addPolygonMatrixOp("sphere_mesh", "addSphere", new Class[] {
+            Double.class, Double.class, Double.class, Double.class, Integer.class
+        });
+
         addTransformOp("ident", "reset", new Class[] {});
 
         addTransformOp("scale", "addScale", new Class[] {
@@ -205,7 +225,9 @@ public class Interpreter {
         ArrayList<Object> params = new ArrayList<Object>();
 
         for (Class c : paramTypes) {
-            required = (c.equals(Point.class)) ? 2 : 1; // Point needs 2, everything else needs 1
+            required = (c.equals(Point.class)) ? 2 : 1; // Point needs 2,
+                                                        // everything else needs
+                                                        // 1
             if (counter + required - 1 >= args.length) {
                 System.err.println("!! Incorrect number of arguments provided");
                 return null;

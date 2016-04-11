@@ -145,4 +145,12 @@ public class Draw {
             line(pic, color, e.start, e.end);
         }
     }
+
+    public static void polygonMatrix(Image pic, Pixel color, PolygonMatrix pm) {
+        for (Triangle t : pm.polygons) {
+            line(pic, color, t.p1, t.p2);
+            line(pic, color, t.p1, t.p3);
+            line(pic, color, t.p2, t.p3);
+        }
+    }
 }

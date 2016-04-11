@@ -55,7 +55,7 @@ public class PolygonMatrix {
         addTriangle(P7, P8, P5);
     }
 
-    public void addSphere(Double cx, Double cy, Double cz, Double radius, int res) {
+    public void addSphere(Double cx, Double cy, Double cz, Double radius, Integer res) {
         EdgeMatrix spherePoints = new EdgeMatrix();
         spherePoints.addSphere(cx, cy, cz, radius);
         Edge[] points = (Edge[]) spherePoints.edges.toArray();
