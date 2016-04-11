@@ -12,6 +12,13 @@ public class Main {
     private static Object[] currArgs;
 
     public static void main(String[] args) throws IOException {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                System.err.println("StuyGFX exitting...");
+                System.gc();
+            }
+        });
 
         interpreter = new Interpreter();
 
