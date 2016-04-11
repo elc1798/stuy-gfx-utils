@@ -1,5 +1,10 @@
 package org.stuygfx.graphics;
 
+import static org.stuygfx.CONSTANTS.DEFAULT_VIEW_VEC;
+
+import org.stuygfx.math.Matrix;
+import org.stuygfx.math.MatrixMath;
+
 public class Triangle {
 
     private Point p1;
@@ -12,26 +17,31 @@ public class Triangle {
         this.p3 = p3;
     }
 
+    /**
+     * Implementation of backface culling utilizing the following steps:
+     * <br>
+     * 1. Calculate the normal vector N
+     * <br>
+     * 2. Find theta between N and V
+     * <br>
+     * 3. If 90 <= theta <= 270, return true
+     * 
+     * @return true if 90 <= theta <= 270
+     */
     public boolean isFacingOutwards() {
-        /*
-         * A triangle is facing outwards if:
-         *
-         *     p2
-         *     /\
-         *    /  \
-         * p3/____\ p1
-         *
-         * p1.x > p2.x
-         * p2.x > p3.x
-         *
-         * However, we must assert this test with all different rotations of
-         * the triangle
-         */
-
-        boolean p1_p2_p3 = p1.x >= p2.x && p2.x >= p3.x;
-        boolean p2_p3_p1 = p2.x >= p3.x && p3.x >= p1.x;
-        boolean p3_p1_p2 = p3.x >= p1.x && p1.x >= p2.x;
-        return p1_p2_p3 || p2_p3_p1 || p3_p1_p2;
+        Matrix A = new Matrix(new double[][] {
+            {
+                p2.x - p1.x, p2.y - p1.y, p2.z - p1.z
+            }
+        });
+        Matrix B = new Matrix(new double[][] {
+            {
+                p3.x - p1.x, p3.y - p1.y, p3.z - p1.z
+            }
+        });
+        Matrix N = MatrixMath.crossProduct(A, B);
+        double cosTheta = MatrixMath.dotProduct(N, DEFAULT_VIEW_VEC) / MatrixMath.magnitude(N);
+        return cosTheta <= 0.0;
     }
 
 }

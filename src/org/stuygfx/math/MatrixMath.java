@@ -64,4 +64,13 @@ public class MatrixMath {
         }
         return idMat;
     }
+
+    public static double magnitude(Matrix vec) {
+        assert (vec.rows() == 1);
+        double sum = 0;
+        for (double d : vec.data[0]) {
+            sum += d * d;
+        }
+        return Math.sqrt(sum);
+    }
 }
