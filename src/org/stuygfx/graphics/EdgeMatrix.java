@@ -170,10 +170,10 @@ public class EdgeMatrix {
     public void addTorus(Double cx, Double cy, Double cz, Double r1, Double r2) {
         double x, y, z;
 
-        for (int p = 0; p < 50; p++) {
-            double rot = (double) p / 50;
-            for (int t = 0; t < 50; t ++) {
-                double circ = (double) t / 50;
+        for (int p = 0; p < 10; p++) {
+            double rot = (double) p / 10;
+            for (int t = 0; t < 10; t ++) {
+                double circ = (double) t / 10;
                 x = Math.cos(rot * 2 * Math.PI) * (r1 * Math.cos(circ * 2 * Math.PI) + r2) + cx;
                 y = r1 * Math.sin(circ * 2 * Math.PI) + cy;
                 z = Math.sin(rot * 2 * Math.PI) * (r1 * Math.cos(circ * 2 * Math.PI) + r2) + cz;

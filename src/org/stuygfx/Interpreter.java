@@ -156,15 +156,15 @@ public class Interpreter {
 
         addEdgeMatrixOp("clear", "empty", new Class[] {});
 
-        addEdgeMatrixOp("box", "addBox", new Class[] {
+        addEdgeMatrixOp("box_dots", "addBox", new Class[] {
             Integer.class, Integer.class, Integer.class, Integer.class, Integer.class, Integer.class
         });
 
-        addEdgeMatrixOp("sphere", "addSphere", new Class[] {
+        addEdgeMatrixOp("sphere_dots", "addSphere", new Class[] {
             Double.class, Double.class, Double.class, Double.class
         });
 
-        addEdgeMatrixOp("torus", "addTorus", new Class[] {
+        addEdgeMatrixOp("torus_dots", "addTorus", new Class[] {
             Double.class, Double.class, Double.class, Double.class, Double.class
         });
 
@@ -177,6 +177,18 @@ public class Interpreter {
         });
 
         addPolygonMatrixOp("torus_mesh", "addTorus", new Class[] {
+            Double.class, Double.class, Double.class, Double.class, Double.class
+        });
+
+        addPolygonMatrixOp("sphere", "addSphere", new Class[] {
+            Double.class, Double.class, Double.class, Double.class
+        });
+
+        addPolygonMatrixOp("box", "addRectPrism", new Class[] {
+            Integer.class, Integer.class, Integer.class, Integer.class, Integer.class, Integer.class
+        });
+
+        addPolygonMatrixOp("torus", "addTorus", new Class[] {
             Double.class, Double.class, Double.class, Double.class, Double.class
         });
 
