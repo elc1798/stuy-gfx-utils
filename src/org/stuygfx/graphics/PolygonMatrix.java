@@ -80,4 +80,43 @@ public class PolygonMatrix {
             }
         }
     }
+
+    public void addTorus(Double cx, Double cy, Double cz, Double r1, Double r2) {
+        EdgeMatrix torusPoints = new EdgeMatrix();
+        torusPoints.addTorus(cx, cy, cz, r1, r2);
+        Edge[] points = (Edge[]) torusPoints.edges.toArray(new Edge[0]);
+        int n = (int) Math.sqrt(points.length);
+        for (int circ = 0; circ < n - 1; circ++) {
+            for (int point = 0; point < n - 1; point++) {
+                // Points: We make a triangle of P1, P(n + 2), P2 and
+                // another of P(n + 1), P(n + 2), P1
+                addTriangle(points[point + circ * n].start.clone(),
+                    points[point + 1 + (circ + 1) * n].start.clone(),
+                    points[point + 1 + circ * n].start.clone());
+                addTriangle(points[point + (circ + 1) * n].start.clone(),
+                    points[point + 1 + (circ + 1) * n].start.clone(),
+                    points[point + circ * n].start.clone());
+                // Edge case
+                addTriangle(points[point + (n - 1) * n].start.clone(),
+                    points[point + 1].start.clone(),
+                    points[point + 1 + (n - 1) * n].start.clone());
+                addTriangle(points[point].start.clone(),
+                    points[point + 1].start.clone(),
+                    points[point + (n - 1) * n].start.clone());
+            }
+            // hardcode edge case :D
+            addTriangle(points[n - 1 + circ * n].start.clone(),
+                points[(circ + 1) * n].start.clone(),
+                points[circ * n].start.clone());
+            addTriangle(points[n - 1 + (circ + 1) * n].start.clone(),
+                points[(circ + 1) * n].start.clone(),
+                points[n - 1 + circ * n].start.clone());
+            addTriangle(points[n - 1 + (n - 1) * n].start.clone(),
+                points[0].start.clone(),
+                points[(n - 1) * n].start.clone());
+            addTriangle(points[n - 1].start.clone(),
+                points[0].start.clone(),
+                points[n - 1 + (n - 1) * n].start.clone());
+        }
+    }
 }
