@@ -100,6 +100,10 @@ public class Interpreter {
         Draw.edgeMatrix(canvas, new Pixel(255, 0, 0), em);
     }
 
+    public boolean contains(String key) {
+        return fxnMapper.containsKey(key);
+    }
+
     public void apply() {
         Transformations.applyTransformation(masterTrans, em);
         Transformations.applyTransformation(masterTrans, pm);
@@ -165,7 +169,7 @@ public class Interpreter {
         });
 
         addPolygonMatrixOp("sphere_mesh", "addSphere", new Class[] {
-            Double.class, Double.class, Double.class, Double.class, Integer.class
+            Double.class, Double.class, Double.class, Double.class
         });
 
         addPolygonMatrixOp("box_mesh", "addRectPrism", new Class[] {

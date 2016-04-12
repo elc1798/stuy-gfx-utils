@@ -30,6 +30,10 @@ public class Main {
 
         while (sc.hasNextLine()) {
             currCommand = sc.nextLine().trim();
+            if (!interpreter.contains(currCommand)) {
+                System.err.println("Unrecognized command");
+                continue;
+            }
             if (interpreter.hasNoParams(currCommand)) {
                 currArgs = CONSTANTS.NO_ARGS;
             } else {
