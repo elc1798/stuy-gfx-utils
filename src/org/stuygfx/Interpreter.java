@@ -96,8 +96,8 @@ public class Interpreter {
     }
 
     private void draw() {
-        Draw.edgeMatrix(canvas, new Pixel(0, 255, 0), em);
-        Draw.polygonMatrix(canvas, new Pixel(0, 255, 0), pm);
+        Draw.polygonMatrix(canvas, new Pixel(255, 20, 255), pm);
+        Draw.edgeMatrix(canvas, new Pixel(255, 0, 0), em);
     }
 
     public void apply() {
