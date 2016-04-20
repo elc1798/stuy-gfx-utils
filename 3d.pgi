@@ -1,3 +1,9 @@
+xrotate
+10
+yrotate
+10
+zrotate
+10
 sphere
 384 384 0 84
 sphere
@@ -6,14 +12,6 @@ torus
 256 256 0 10 80
 box
 0 0 0 511 511 511
-ident
-xrotate
-10
-yrotate
-10
-zrotate
-10
-apply
 save
 rendered.ppm
 display
