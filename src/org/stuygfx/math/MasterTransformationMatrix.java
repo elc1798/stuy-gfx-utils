@@ -43,7 +43,13 @@ public class MasterTransformationMatrix extends Matrix {
 
     public MasterTransformationMatrix clone() {
         MasterTransformationMatrix copy = new MasterTransformationMatrix();
-        copy.set(super.clone());
+        Matrix data = new Matrix(this.rows(), this.cols());
+        for (int i = 0; i < this.rows(); i++) {
+            for (int j = 0; j < this.cols(); j++) {
+                data.data[i][j] = this.data[i][j];
+            }
+        }
+        copy.set(data);
         return copy;
     }
 }

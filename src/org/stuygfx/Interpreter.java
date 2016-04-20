@@ -35,16 +35,7 @@ public class Interpreter {
             this.func = func;
         }
 
-        public Command(Method func) {
-            this.caller = null;
-            this.func = func;
-        }
-
         public Object run(Object[] params) {
-            // Hotfix: TODO - Write a more legit fix
-            if (this.caller == null) {
-                this.caller = transStack.peek();
-            }
             try {
                 System.out.println("Running [ " + func.toString() + " ] on " + caller.toString());
                 return func.invoke(caller, params);
@@ -106,10 +97,7 @@ public class Interpreter {
     @SuppressWarnings("rawtypes")
     private void addTransformOp(String key, String fxnName, Class[] paramTypes) {
         try {
-            // THIS LINE IS THE ISSUE! ALL TRANSFORMATION OPERATIONS WILL BE
-            // CALLED BY THE
-            // TOP OF TRANSSTACK AT THE TIME OF ADDING THE DEFINITIONS!
-            addDef(key, new Command(MasterTransformationMatrix.class.getMethod(fxnName, paramTypes)));
+            addDef(key, new Command(transStack, TransformationStack.class.getMethod(fxnName, paramTypes)));
             transFxns.add(key);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
