@@ -1,17 +1,19 @@
-xrotate
-10
+push
 yrotate
-10
-zrotate
-10
-sphere
-384 384 0 84
-sphere
-128 384 0 84
-torus
-256 256 0 10 80
+45
+xrotate
+45
+push
+translate
+250 250 0
 box
-0 0 0 511 511 511
+-50 -50 -50 100 100 100
+sphere
+0 0 0 225
+sphere
+0 0 0 50
+sphere
+0 0 0 170
 save
 rendered.ppm
 display
