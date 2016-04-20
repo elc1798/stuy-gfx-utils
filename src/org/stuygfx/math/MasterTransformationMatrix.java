@@ -7,14 +7,6 @@ public class MasterTransformationMatrix extends Matrix {
         reset();
     }
 
-    public MasterTransformationMatrix(int rows, int cols) {
-        super(rows, cols);
-    }
-
-    public MasterTransformationMatrix(double[][] data) {
-        super(data);
-    }
-
     public void set(Matrix trans) {
         assert (trans.rows() == 4 && trans.cols() == 4);
         this.data = trans.data;
@@ -46,5 +38,11 @@ public class MasterTransformationMatrix extends Matrix {
 
     public void addScale(Double xFac, Double yFac, Double zFac) {
         this.addTransformation(Transformations.getScaleMatrix(xFac, yFac, zFac));
+    }
+
+    public MasterTransformationMatrix clone() {
+        MasterTransformationMatrix copy = new MasterTransformationMatrix();
+        copy.set(super.clone());
+        return copy;
     }
 }

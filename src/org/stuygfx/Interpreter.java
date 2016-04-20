@@ -11,16 +11,19 @@ import org.stuygfx.graphics.Image;
 import org.stuygfx.graphics.Pixel;
 import org.stuygfx.graphics.Point;
 import org.stuygfx.graphics.PolygonMatrix;
+import org.stuygfx.graphics.TransformationStack;
 import org.stuygfx.math.MasterTransformationMatrix;
 import org.stuygfx.math.Transformations;
 
 public class Interpreter {
 
     private final ConcurrentHashMap<String, Command> fxnMapper;
+    private ArrayList<String> transFxns;
+    private ArrayList<String> drawFxns;
     private Image canvas;
     private EdgeMatrix em;
     private PolygonMatrix pm;
-    private MasterTransformationMatrix masterTrans;
+    private TransformationStack transStack;
 
     private class Command {
 
@@ -34,6 +37,7 @@ public class Interpreter {
 
         public Object run(Object[] params) {
             try {
+                System.out.println("Running [ " + func.toString() + " ] on " + caller.toString());
                 return func.invoke(caller, params);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -49,12 +53,16 @@ public class Interpreter {
 
     public Interpreter() {
         fxnMapper = new ConcurrentHashMap<String, Command>();
+        transFxns = new ArrayList<String>();
+        drawFxns = new ArrayList<String>();
         canvas = new Image();
         canvas.shouldRelectOverX(true);
         em = new EdgeMatrix();
         pm = new PolygonMatrix();
-        masterTrans = new MasterTransformationMatrix();
+        transStack = new TransformationStack();
 
+        em.empty();
+        pm.empty();
         initializeDefinitions();
     }
 
@@ -66,6 +74,7 @@ public class Interpreter {
     private void addEdgeMatrixOp(String key, String fxnName, Class[] paramTypes) {
         try {
             addDef(key, new Command(em, EdgeMatrix.class.getMethod(fxnName, paramTypes)));
+            drawFxns.add(key);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (SecurityException e) {
@@ -77,6 +86,7 @@ public class Interpreter {
     private void addPolygonMatrixOp(String key, String fxnName, Class[] paramTypes) {
         try {
             addDef(key, new Command(pm, PolygonMatrix.class.getMethod(fxnName, paramTypes)));
+            drawFxns.add(key);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (SecurityException e) {
@@ -87,7 +97,19 @@ public class Interpreter {
     @SuppressWarnings("rawtypes")
     private void addTransformOp(String key, String fxnName, Class[] paramTypes) {
         try {
-            addDef(key, new Command(masterTrans, MasterTransformationMatrix.class.getMethod(fxnName, paramTypes)));
+            addDef(key, new Command(transStack.peek(), MasterTransformationMatrix.class.getMethod(fxnName, paramTypes)));
+            transFxns.add(key);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private void addStackOp(String key, String fxnName, Class[] paramTypes) {
+        try {
+            addDef(key, new Command(transStack, TransformationStack.class.getMethod(fxnName, paramTypes)));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (SecurityException e) {
@@ -105,8 +127,8 @@ public class Interpreter {
     }
 
     public void apply() {
-        Transformations.applyTransformation(masterTrans, em);
-        Transformations.applyTransformation(masterTrans, pm);
+        Transformations.applyTransformation(transStack.peek(), em);
+        Transformations.applyTransformation(transStack.peek(), pm);
     }
 
     public void save(String filename) {
@@ -214,6 +236,10 @@ public class Interpreter {
             Double.class
         });
 
+        addStackOp("push", "push", new Class[] {});
+
+        addStackOp("pop", "pop", new Class[] {});
+
         try {
             addDef("apply", new Command(this, Interpreter.class.getMethod("apply", new Class[] {})));
             addDef("save", new Command(this, Interpreter.class.getMethod("save", new Class[] {
@@ -229,8 +255,17 @@ public class Interpreter {
     }
 
     public Object call(String key, Object[] params) {
+        em.empty();
+        pm.empty();
         if (fxnMapper.containsKey(key)) {
-            return fxnMapper.get(key).run(params);
+            Object retval = fxnMapper.get(key).run(params);
+            if (drawFxns.contains(key)) {
+                apply();
+                draw();
+                em.empty();
+                pm.empty();
+            }
+            return retval;
         } else {
             return null;
         }

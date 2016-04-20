@@ -10,6 +10,10 @@ public class PolygonMatrix {
         polygons = new ArrayList<Triangle>();
     }
 
+    public void empty() {
+        polygons.clear();
+    }
+
     public void addTriangle(Point p1, Point p2, Point p3) {
         polygons.add(new Triangle(p1, p2, p3));
     }
