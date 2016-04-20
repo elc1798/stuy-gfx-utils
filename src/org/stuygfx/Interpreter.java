@@ -97,6 +97,8 @@ public class Interpreter {
     @SuppressWarnings("rawtypes")
     private void addTransformOp(String key, String fxnName, Class[] paramTypes) {
         try {
+            // THIS LINE IS THE ISSUE! ALL TRANSFORMATION OPERATIONS WILL BE CALLED BY THE
+            // TOP OF TRANSSTACK AT THE TIME OF ADDING THE DEFINITIONS!
             addDef(key, new Command(transStack.peek(), MasterTransformationMatrix.class.getMethod(fxnName, paramTypes)));
             transFxns.add(key);
         } catch (NoSuchMethodException e) {
