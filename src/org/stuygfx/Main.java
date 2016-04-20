@@ -30,6 +30,7 @@ public class Main {
 
         while (sc.hasNextLine()) {
             currCommand = sc.nextLine().trim();
+            System.out.println(">>> " + currCommand);
             if (!interpreter.contains(currCommand)) {
                 System.err.println("Unrecognized command");
                 continue;
@@ -44,6 +45,7 @@ public class Main {
             }
             System.out.printf(">> Calling %s with %d parameters\n", currCommand, currArgs.length);
             interpreter.call(currCommand, currArgs);
+            System.out.println("\n\n");
         }
 
         System.gc();

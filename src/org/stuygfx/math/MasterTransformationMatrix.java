@@ -18,6 +18,7 @@ public class MasterTransformationMatrix extends Matrix {
 
     public void addTransformation(Matrix trans) {
         this.set(MatrixMath.crossProduct(trans, this));
+        this.print();
     }
 
     public void addRotX(Double theta) {

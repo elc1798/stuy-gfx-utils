@@ -127,6 +127,7 @@ public class Interpreter {
     }
 
     public void apply() {
+        System.out.println("APPLYING TRANSFORMATIONS USING " + transStack.peek().toString());
         Transformations.applyTransformation(transStack.peek(), em);
         Transformations.applyTransformation(transStack.peek(), pm);
     }
