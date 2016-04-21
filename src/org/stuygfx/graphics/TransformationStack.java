@@ -41,7 +41,7 @@ public class TransformationStack {
     }
 
     public void addTransformation(Matrix trans) {
-        peek().set(MatrixMath.crossProduct(trans, peek()));
+        peek().set(MatrixMath.crossProduct(peek(), trans));
         System.out.println(peek().toString());
         peek().print();
     }
