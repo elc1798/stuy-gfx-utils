@@ -114,6 +114,8 @@ public class MDLReader {
         OPCode opc;
         while (i.hasNext()) {
             opc = (OPCode) i.next();
+            System.out.println("============== BEGIN OPERATION =============");
+            System.out.println(opc.getClass());
             if (opc instanceof OPPush) {
                 origins.push();
             } else if (opc instanceof OPPop) {
@@ -216,7 +218,10 @@ public class MDLReader {
             // Empty
             em.empty();
             pm.empty();
+            System.out.println("=============== END OPERATION ==============");
+            System.out.println("\n\n");
         }
+        System.out.println("FINISHED PROCESSING");
     }
 
     private void save(String filename) {
