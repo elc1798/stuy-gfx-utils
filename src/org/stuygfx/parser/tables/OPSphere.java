@@ -1,0 +1,27 @@
+package org.stuygfx.parser.tables;
+
+public class OPSphere extends OPShape {
+
+    private double[] center;
+    private double r;
+
+    public OPSphere(double[] center, double r, String cs, String constants) {
+        this.center = center;
+        this.r = r;
+        this.cs = cs;
+        this.constants = constants;
+    }
+
+    public String toString() {
+        return "Sphere: " + "Center - " + triple(center) +
+            " Radius - " + r + " cs - " + cs + " constants - " + constants;
+    }
+
+    public double[] getCenter() {
+        return center;
+    }
+
+    public double getRadius() {
+        return r;
+    }
+}
