@@ -65,4 +65,12 @@ public class TransformationStack {
     public void addScale(Double xFac, Double yFac, Double zFac) {
         addTransformation(Transformations.getScaleMatrix(xFac, yFac, zFac));
     }
+
+    public void print() {
+        System.out.println("+===============  TRANS STACK  ==============+");
+        for (MasterTransformationMatrix mat : transStack) {
+            mat.print();
+        }
+        System.out.println("+===============  ***********  ==============+");
+    }
 }

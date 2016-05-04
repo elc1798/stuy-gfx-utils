@@ -1,8 +1,15 @@
 package org.stuygfx;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
+
+import org.stuygfx.parser.MDLParser;
+import org.stuygfx.parser.ParseException;
+import org.stuygfx.parser.tables.OPCode;
+import org.stuygfx.parser.tables.SymbolTable;
 
 public class Main {
 
@@ -11,7 +18,7 @@ public class Main {
     private static String currCommand;
     private static Object[] currArgs;
 
-    public static void main(String[] args) throws IOException {
+    public static void interpreter(String[] args) throws IOException {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -51,4 +58,34 @@ public class Main {
         System.gc();
     }
 
+    public static void main(String[] args) throws IOException, ParseException {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                System.err.println("StuyGFX exitting...");
+                System.gc();
+            }
+        });
+        ArrayList<OPCode> opcodes;
+        SymbolTable symTab;
+        MDLParser parser;
+
+        String filename;
+        if (args.length == 1)
+            filename = args[0];
+        else
+            filename = "test.mdl";
+        try {
+            parser = new MDLParser(new FileReader(filename));
+        } catch (IOException e) {
+            parser = new MDLParser(System.in);
+        }
+
+        parser.start();
+        opcodes = parser.getOps();
+        symTab = parser.getSymTab();
+
+        MDLReader mdlr = new MDLReader(opcodes, symTab);
+        mdlr.process();
+    }
 }
