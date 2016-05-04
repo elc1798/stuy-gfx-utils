@@ -58,7 +58,7 @@ public class TransformationStack {
         addTransformation(Transformations.getRotXMatrix(theta));
     }
 
-    public void addTranslate(Integer dx, Integer dy, Integer dz) {
+    public void addTranslate(Double dx, Double dy, Double dz) {
         addTransformation(Transformations.getTranslationMatrix(dx, dy, dz));
     }
 

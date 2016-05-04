@@ -9,7 +9,7 @@ import org.stuygfx.graphics.Triangle;
 
 public class Transformations {
 
-    public static Matrix getTranslationMatrix(int dx, int dy, int dz) {
+    public static Matrix getTranslationMatrix(double dx, double dy, double dz) {
         Matrix transMat = identityMatrix(4);
         transMat.data[0][3] = dx;
         transMat.data[1][3] = dy;

@@ -12,7 +12,6 @@ import org.stuygfx.graphics.Pixel;
 import org.stuygfx.graphics.Point;
 import org.stuygfx.graphics.PolygonMatrix;
 import org.stuygfx.graphics.TransformationStack;
-import org.stuygfx.math.MasterTransformationMatrix;
 import org.stuygfx.math.Transformations;
 
 public class Interpreter {
@@ -222,7 +221,7 @@ public class Interpreter {
         });
 
         addTransformOp("translate", "addTranslate", new Class[] {
-            Integer.class, Integer.class, Integer.class
+            Double.class, Double.class, Double.class
         });
 
         addTransformOp("xrotate", "addRotX", new Class[] {
