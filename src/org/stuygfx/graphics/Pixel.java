@@ -18,4 +18,9 @@ public class Pixel {
         this.b = b;
     }
 
+    public void set(int r, int g, int b) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+    }
 }

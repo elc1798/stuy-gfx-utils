@@ -41,6 +41,14 @@ public class Image {
         }
     }
 
+    public void resetCanvas() {
+        for (int i = 0; i < this.canvas.length; i++) {
+            for (int j = 0; j < this.canvas[0].length; j++) {
+                this.canvas[i][j].set(0, 0, 0);
+            }
+        }
+    }
+
     public void setOrigin(Point origin) {
         this.originX = origin.x;
         this.originY = origin.y;
