@@ -67,11 +67,13 @@ public class PPMGenerator {
                 }
             } else {
                 System.out.printf("%sOutput directory '%s' has conflicting file!%s\n", ANSI_RED, basename, ANSI_RESET);
+                System.exit(-1);
             }
         } else {
             System.out.printf("%sCreating output directory...%s\n", ANSI_GREEN, ANSI_RESET);
             if (!dirMaker.mkdir()) {
                 System.out.printf("CANNOT CREATE DIRECTORY!%s\n", ANSI_RED, ANSI_RESET);
+                System.exit(-1);
             } else {
                 System.out.printf("%sOutput directory '%s' created!%s\n", ANSI_GREEN, basename, ANSI_RESET);
             }
