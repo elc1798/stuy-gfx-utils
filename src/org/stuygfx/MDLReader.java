@@ -358,15 +358,27 @@ public class MDLReader {
                     String filename = ((OPSave) opc).getName();
                     save(filename);
                 } else if (opc instanceof OPDisplay) {
-                    save(CONSTANTS.TMP_FILE_NAME);
-                    try {
-                        Runtime.getRuntime().exec("display " + CONSTANTS.TMP_FILE_NAME).waitFor();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    if (frame == numFrames - 1) { // Only run display upon the
+                                                  // last frame
+                        try {
+                            String command;
+                            if (isAnimated) {
+                                String filename = String.format(formatString, frame);
+                                save(filename);
+                                command = "animate " + basename + "/*.ppm";
+                            } else {
+                                save(CONSTANTS.TMP_FILE_NAME);
+                                command = "display " + CONSTANTS.TMP_FILE_NAME;
+                            }
+                            Runtime.getRuntime().exec(command).waitFor();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
+
                 // Apply
                 if (debug) {
                     System.out.println("APPLYING TRANSFORMATIONS USING " + origins.peek().toString());
