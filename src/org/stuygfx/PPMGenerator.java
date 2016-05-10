@@ -51,7 +51,7 @@ public class PPMGenerator {
         if (dirMaker.exists()) {
             if (dirMaker.isDirectory()) {
                 System.out.printf("%sOutput directory '%s/' already exists!%s\n", ANSI_YELLOW, basename, ANSI_RESET);
-                System.out.printf("%sAttempting to purge output directory...%s\n", ANSI_YELLOW, basename, ANSI_RESET);
+                System.out.printf("%sAttempting to purge output directory... %s\n", ANSI_YELLOW, ANSI_RESET);
                 File[] filesFound = dirMaker.listFiles();
                 for (File found : filesFound) {
                     System.out.printf("  %sDiscovered [%s]%s", ANSI_YELLOW, found.getName(), ANSI_RESET);

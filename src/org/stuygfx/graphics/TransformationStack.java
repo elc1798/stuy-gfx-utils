@@ -31,19 +31,19 @@ public class TransformationStack {
     }
 
     public void push() {
-        System.out.println("Pushing to stack... original top: " + peek().toString());
-        peek().print();
+        // System.out.println("Pushing to stack... original top: " + peek().toString());
+        // peek().print();
         MasterTransformationMatrix originalTop = peek();
         transStack.push(peek().clone());
-        System.out.println("Pushed duplicate to stack: New top: " + peek().toString());
-        peek().print();
+        // System.out.println("Pushed duplicate to stack: New top: " + peek().toString());
+        // peek().print();
         assert (originalTop == transStack.get(1));
     }
 
     public void addTransformation(Matrix trans) {
         peek().set(MatrixMath.crossProduct(trans, peek()));
-        System.out.println(peek().toString());
-        peek().print();
+        // System.out.println(peek().toString());
+        // peek().print();
     }
 
     public void addRotX(Double theta) {

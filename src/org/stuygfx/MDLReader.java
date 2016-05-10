@@ -253,16 +253,21 @@ public class MDLReader {
         animationPass();
 
         for (int frame = 0; frame < numFrames; frame++) {
+
+            System.out.printf("Rendering frame %d\n", frame);
+
             Iterator<OPCode> i = opcodes.iterator();
             OPCode opc;
+            double timeStart = 0;
+
             while (i.hasNext()) {
                 opc = (OPCode) i.next();
 
                 if (debug) {
                     System.out.println("============== BEGIN OPERATION =============");
+                    System.out.println(opc.getClass());
+                    timeStart = System.currentTimeMillis();
                 }
-
-                System.out.println(opc.getClass());
 
                 // Get the knobValue. This will make it 1.0 if knobValue is
                 // inapplicable for the current operation
@@ -378,6 +383,7 @@ public class MDLReader {
 
                 if (debug) {
                     System.out.println("=============== END OPERATION ==============");
+                    System.out.printf("Rendered frame in %f ms\n", System.currentTimeMillis() - timeStart);
                     System.out.println("\n\n");
                 }
             }
