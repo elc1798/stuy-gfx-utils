@@ -29,8 +29,14 @@
 
 package org.stuygfx;
 
+import static org.stuygfx.CONSTANTS.ANSI_RED;
+import static org.stuygfx.CONSTANTS.ANSI_RESET;
+import static org.stuygfx.CONSTANTS.ANSI_YELLOW;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -43,9 +49,11 @@ import org.stuygfx.graphics.PolygonMatrix;
 import org.stuygfx.graphics.TransformationStack;
 import org.stuygfx.math.Transformations;
 import org.stuygfx.parser.ParseException;
+import org.stuygfx.parser.tables.OPBasename;
 import org.stuygfx.parser.tables.OPBox;
 import org.stuygfx.parser.tables.OPCode;
 import org.stuygfx.parser.tables.OPDisplay;
+import org.stuygfx.parser.tables.OPFrames;
 import org.stuygfx.parser.tables.OPLine;
 import org.stuygfx.parser.tables.OPMove;
 import org.stuygfx.parser.tables.OPPop;
@@ -55,6 +63,8 @@ import org.stuygfx.parser.tables.OPSave;
 import org.stuygfx.parser.tables.OPScale;
 import org.stuygfx.parser.tables.OPSphere;
 import org.stuygfx.parser.tables.OPTorus;
+import org.stuygfx.parser.tables.OPTrans;
+import org.stuygfx.parser.tables.OPVary;
 import org.stuygfx.parser.tables.SymbolTable;
 
 public class MDLReader {
@@ -67,8 +77,13 @@ public class MDLReader {
     private EdgeMatrix em;
     private PolygonMatrix pm;
 
-    String basename = "";
-    String formatString;
+    private String basename;
+    private String formatString;
+
+    // For animation
+    private boolean isAnimated;
+    private int numFrames;
+    private Hashtable<String, Double[]> knobs;
 
     public MDLReader(ArrayList<OPCode> o, SymbolTable s) {
         opcodes = o;
@@ -80,6 +95,11 @@ public class MDLReader {
         em = new EdgeMatrix();
         pm = new PolygonMatrix();
         origins = new TransformationStack();
+
+        basename = "";
+        isAnimated = false;
+        numFrames = -1;
+        knobs = new Hashtable<String, Double[]>();
     }
 
     /**
@@ -109,117 +129,265 @@ public class MDLReader {
         origins.print();
     }
 
-    public void process() throws ParseException {
-        Iterator<OPCode> i = opcodes.iterator();
-        OPCode opc;
-        while (i.hasNext()) {
-            opc = (OPCode) i.next();
-            System.out.println("============== BEGIN OPERATION =============");
-            System.out.println(opc.getClass());
-            if (opc instanceof OPPush) {
-                origins.push();
-            } else if (opc instanceof OPPop) {
-                origins.pop();
-            } else if (opc instanceof OPMove) {
-                double[] values = ((OPMove) opc).getValues();
-                double dx = values[0];
-                double dy = values[1];
-                double dz = values[2];
-                origins.addTranslate(dx, dy, dz);
-            } else if (opc instanceof OPScale) {
-                double[] values = ((OPScale) opc).getValues();
-                double xFac = values[0];
-                double yFac = values[1];
-                double zFac = values[2];
-                origins.addScale(xFac, yFac, zFac);
-            } else if (opc instanceof OPRotate) {
-                char axis = ((OPRotate) opc).getAxis();
-                double degrees = ((OPRotate) opc).getDeg();
-                switch (axis) {
-                    case 'x':
-                        origins.addRotX(degrees);
-                        break;
-                    case 'y':
-                        origins.addRotY(degrees);
-                        break;
-                    case 'z':
-                        origins.addRotZ(degrees);
-                        break;
-                    default:
-                        System.err.println("INVALID AXIS!!!");
-                        System.exit(1);
+    /**
+     * Prints knobs and knob values for each frame (for debugging purposes)
+     */
+    public void printKnobs() {
+        for (String key : knobs.keySet()) {
+            System.out.printf("%s: %s\n", key, Arrays.toString(knobs.get(key)));
+        }
+    }
+
+    public void printWarning(String message) {
+        System.out.printf("%s[WARNING] %s%s", ANSI_YELLOW, message, ANSI_RESET);
+    }
+
+    public void printError(String message) {
+        System.out.printf("%s[ERROR] %s%s", ANSI_RED, message, ANSI_RESET);
+    }
+
+    public void throwError(String message) throws ParseException {
+        printError(message);
+        throw new ParseException();
+    }
+
+    public void checkForAnimation() throws ParseException {
+        for (OPCode opc : opcodes) {
+            if (opc instanceof OPFrames) {
+                if (numFrames != -1) { // -1 is the value for unset frame value
+                    printWarning("Number of animation frames set multiple times");
                 }
-            } else if (opc instanceof OPBox) {
-                OPBox opb = (OPBox) opc;
-                double[] loc = opb.getRootCoor();
-                double x = loc[0];
-                double y = loc[1];
-                double z = loc[2];
+                isAnimated = true;
+                numFrames = ((OPFrames) opc).getNum();
+            } else if (opc instanceof OPBasename) {
+                if (basename.length() != 0) {
+                    printWarning("Animation frame / image file basename set multiple times");
+                }
+                isAnimated = true;
+                basename = ((OPBasename) opc).getName();
+            } else if (opc instanceof OPVary) {
+                isAnimated = true;
+            }
+        }
+    }
 
-                double[] dim = opb.getDimensions();
-                double dx = dim[0];
-                double dy = dim[1];
-                double dz = dim[2];
+    public void animationPass() throws ParseException, IOException {
+        // Ensure isAnimated is set to false beforehand
+        isAnimated = false;
+        checkForAnimation();
+        if (!isAnimated) {
+            numFrames = 1;
+            return;
+        }
 
-                pm.addRectPrism((int) x, (int) y, (int) z, (int) dx, (int) dy, (int) dz);
-            } else if (opc instanceof OPSphere) {
-                OPSphere ops = (OPSphere) opc;
-                double[] center = ops.getCenter();
-                double cx = center[0];
-                double cy = center[1];
-                double cz = center[2];
+        // Error check
 
-                double radius = ops.getRadius();
+        if (numFrames == -1) {
+            throwError("Number of frames for animation not set");
+        }
 
-                pm.addSphere(cx, cy, cz, radius);
-            } else if (opc instanceof OPTorus) {
-                OPTorus opt = (OPTorus) opc;
-                double[] center = opt.getCenter();
-                double cx = center[0];
-                double cy = center[1];
-                double cz = center[2];
+        if (basename.length() == 0) {
+            throwError("Animation frame / image file basename not set");
+        }
 
-                double outerRadius = opt.getOuterRadius();
-                double crossSectionRadius = opt.getCrossSectionRadius();
+        // Get knob values
 
-                pm.addTorus(cx, cy, cz, outerRadius, crossSectionRadius);
-            } else if (opc instanceof OPLine) {
-                double[] start = ((OPLine) opc).getP1();
-                double x0 = start[0];
-                double y0 = start[1];
-                double z0 = start[2];
+        for (OPCode opc : opcodes) {
+            if (opc instanceof OPVary) {
+                Double[] knobValues = knobs.get(((OPVary) opc).getKnob());
 
-                double[] end = ((OPLine) opc).getP2();
-                double x1 = end[0];
-                double y1 = end[1];
-                double z1 = end[2];
+                // Create the knob values if not yet created
+                if (knobValues == null) {
+                    knobValues = new Double[numFrames];
+                }
 
-                em.addEdge(new Point((int) x0, (int) y0, (int) z0), new Point((int) x1, (int) y1, (int) z1));
-            } else if (opc instanceof OPSave) {
-                String filename = ((OPSave) opc).getName();
-                save(filename);
-            } else if (opc instanceof OPDisplay) {
-                save(CONSTANTS.TMP_FILE_NAME);
-                try {
-                    Runtime.getRuntime().exec("display " + CONSTANTS.TMP_FILE_NAME).waitFor();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                int start = ((OPVary) opc).getStartframe();
+                int end = ((OPVary) opc).getEndframe();
+
+                double startVal = ((OPVary) opc).getStartval();
+                double endVal = ((OPVary) opc).getEndval();
+
+                // Throw error if start frame is not within bounds
+                if (start < 0 || end >= numFrames) {
+                    throwError("Frame start or end [" + ((OPVary) opc).getKnob() + "] is out of bounds");
+                }
+
+                for (int frame = start; frame <= end; frame++) {
+                    knobValues[frame] = startVal;
+                    // Add rate of change:
+                    startVal += (endVal - startVal) / (end - start + 1);
+                }
+
+                knobs.put(((OPVary) opc).getKnob(), knobValues);
+            }
+        }
+        PPMGenerator.setUpOutputDirectory(basename);
+        int numberLength = Integer.toString(numFrames).length();
+        formatString = basename + "/" + basename + "-%0" + numberLength + "d";
+    }
+
+    public double getKnobAtFrame(OPCode opc, int frame) throws ParseException {
+        if (isAnimated && ((OPMove) opc).getKnob() != null) {
+            Double[] knobValues = knobs.get(((OPTrans) opc).getKnob());
+            if (knobValues == null) {
+                throwError("Knob " + ((OPTrans) opc).getKnob() + " does not exist");
+            }
+            Double knobValue = knobValues[frame];
+            if (knobValue == null) {
+                throwError("Knob " + ((OPTrans) opc).getKnob() + " does not have a value for frame " + frame);
+            }
+            return knobValue;
+        } else {
+            return 1.0;
+        }
+    }
+
+    public void process() throws ParseException, IOException {
+        process(false);
+    }
+
+    public void process(boolean debug) throws ParseException, IOException {
+        animationPass();
+
+        for (int frame = 0; frame < numFrames; frame++) {
+            Iterator<OPCode> i = opcodes.iterator();
+            OPCode opc;
+            while (i.hasNext()) {
+                opc = (OPCode) i.next();
+
+                if (debug) {
+                    System.out.println("============== BEGIN OPERATION =============");
+                }
+
+                System.out.println(opc.getClass());
+
+                // Get the knobValue. This will make it 1.0 if knobValue is
+                // inapplicable for the current operation
+                double knobValue = getKnobAtFrame(opc, frame);
+
+                if (opc instanceof OPPush) {
+                    origins.push();
+                } else if (opc instanceof OPPop) {
+                    origins.pop();
+                } else if (opc instanceof OPMove) {
+                    double[] values = ((OPMove) opc).getValues();
+                    double dx = values[0] * knobValue;
+                    double dy = values[1] * knobValue;
+                    double dz = values[2] * knobValue;
+
+                    origins.addTranslate(dx, dy, dz);
+                } else if (opc instanceof OPScale) {
+                    double[] values = ((OPScale) opc).getValues();
+                    double xFac = values[0] * knobValue;
+                    double yFac = values[1] * knobValue;
+                    double zFac = values[2] * knobValue;
+
+                    origins.addScale(xFac, yFac, zFac);
+                } else if (opc instanceof OPRotate) {
+                    char axis = ((OPRotate) opc).getAxis();
+                    double degrees = ((OPRotate) opc).getDeg() * knobValue;
+                    switch (axis) {
+                        case 'x':
+                            origins.addRotX(degrees);
+                            break;
+                        case 'y':
+                            origins.addRotY(degrees);
+                            break;
+                        case 'z':
+                            origins.addRotZ(degrees);
+                            break;
+                        default:
+                            System.err.println("INVALID AXIS!!!");
+                            System.exit(1);
+                    }
+                } else if (opc instanceof OPBox) {
+                    OPBox opb = (OPBox) opc;
+                    double[] loc = opb.getRootCoor();
+                    double x = loc[0];
+                    double y = loc[1];
+                    double z = loc[2];
+
+                    double[] dim = opb.getDimensions();
+                    double dx = dim[0];
+                    double dy = dim[1];
+                    double dz = dim[2];
+
+                    pm.addRectPrism((int) x, (int) y, (int) z, (int) dx, (int) dy, (int) dz);
+                } else if (opc instanceof OPSphere) {
+                    OPSphere ops = (OPSphere) opc;
+                    double[] center = ops.getCenter();
+                    double cx = center[0];
+                    double cy = center[1];
+                    double cz = center[2];
+
+                    double radius = ops.getRadius();
+
+                    pm.addSphere(cx, cy, cz, radius);
+                } else if (opc instanceof OPTorus) {
+                    OPTorus opt = (OPTorus) opc;
+                    double[] center = opt.getCenter();
+                    double cx = center[0];
+                    double cy = center[1];
+                    double cz = center[2];
+
+                    double outerRadius = opt.getOuterRadius();
+                    double crossSectionRadius = opt.getCrossSectionRadius();
+
+                    pm.addTorus(cx, cy, cz, outerRadius, crossSectionRadius);
+                } else if (opc instanceof OPLine) {
+                    double[] start = ((OPLine) opc).getP1();
+                    double x0 = start[0];
+                    double y0 = start[1];
+                    double z0 = start[2];
+
+                    double[] end = ((OPLine) opc).getP2();
+                    double x1 = end[0];
+                    double y1 = end[1];
+                    double z1 = end[2];
+
+                    em.addEdge(new Point((int) x0, (int) y0, (int) z0), new Point((int) x1, (int) y1, (int) z1));
+                } else if (opc instanceof OPSave) {
+                    String filename = ((OPSave) opc).getName();
+                    save(filename);
+                } else if (opc instanceof OPDisplay) {
+                    save(CONSTANTS.TMP_FILE_NAME);
+                    try {
+                        Runtime.getRuntime().exec("display " + CONSTANTS.TMP_FILE_NAME).waitFor();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                // Apply
+                if (debug) {
+                    System.out.println("APPLYING TRANSFORMATIONS USING " + origins.peek().toString());
+                }
+
+                Transformations.applyTransformation(origins.peek(), em);
+                Transformations.applyTransformation(origins.peek(), pm);
+                // Draw
+                Draw.polygonMatrix(canvas, new Pixel(255, 20, 255), pm);
+                Draw.edgeMatrix(canvas, new Pixel(255, 0, 0), em);
+                // Empty
+                em.empty();
+                pm.empty();
+
+                if (debug) {
+                    System.out.println("=============== END OPERATION ==============");
+                    System.out.println("\n\n");
                 }
             }
-            // Apply
-            System.out.println("APPLYING TRANSFORMATIONS USING " + origins.peek().toString());
-            Transformations.applyTransformation(origins.peek(), em);
-            Transformations.applyTransformation(origins.peek(), pm);
-            // Draw
-            Draw.polygonMatrix(canvas, new Pixel(255, 20, 255), pm);
-            Draw.edgeMatrix(canvas, new Pixel(255, 0, 0), em);
-            // Empty
-            em.empty();
-            pm.empty();
-            System.out.println("=============== END OPERATION ==============");
-            System.out.println("\n\n");
+
+            if (isAnimated) {
+                String filename = String.format(formatString, frame);
+                save(filename);
+
+                canvas.resetCanvas();
+                em.empty();
+                pm.empty();
+                origins.reset();
+            }
         }
         System.out.println("FINISHED PROCESSING");
     }
