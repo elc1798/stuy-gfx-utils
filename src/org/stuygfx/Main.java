@@ -66,15 +66,18 @@ public class Main {
                 System.gc();
             }
         });
+
         ArrayList<OPCode> opcodes;
         SymbolTable symTab;
         MDLParser parser;
 
         String filename;
-        if (args.length == 1)
+        if (args.length == 1) {
             filename = args[0];
-        else
+        } else {
             filename = "test.mdl";
+        }
+
         try {
             parser = new MDLParser(new FileReader(filename));
         } catch (IOException e) {
