@@ -223,7 +223,7 @@ public class MDLReader {
         }
         PPMGenerator.setUpOutputDirectory(basename);
         int numberLength = Integer.toString(numFrames).length();
-        formatString = basename + "/" + basename + "-%0" + numberLength + "d";
+        formatString = basename + "/" + basename + "-%0" + numberLength + "d.ppm";
     }
 
     public double getKnobAtFrame(OPCode opc, int frame) throws ParseException {
