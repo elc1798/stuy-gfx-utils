@@ -227,19 +227,22 @@ public class MDLReader {
     }
 
     public double getKnobAtFrame(OPCode opc, int frame) throws ParseException {
-        if (isAnimated && ((OPMove) opc).getKnob() != null) {
-            Double[] knobValues = knobs.get(((OPTrans) opc).getKnob());
-            if (knobValues == null) {
-                throwError("Knob " + ((OPTrans) opc).getKnob() + " does not exist");
+        try {
+            if (isAnimated && ((OPTrans) opc).getKnob() != null) {
+                Double[] knobValues = knobs.get(((OPTrans) opc).getKnob());
+                if (knobValues == null) {
+                    throwError("Knob " + ((OPTrans) opc).getKnob() + " does not exist");
+                }
+                Double knobValue = knobValues[frame];
+                if (knobValue == null) {
+                    throwError("Knob " + ((OPTrans) opc).getKnob() + " does not have a value for frame " + frame);
+                }
+                return knobValue;
             }
-            Double knobValue = knobValues[frame];
-            if (knobValue == null) {
-                throwError("Knob " + ((OPTrans) opc).getKnob() + " does not have a value for frame " + frame);
-            }
-            return knobValue;
-        } else {
-            return 1.0;
+        } catch (Exception e) {
+            // This is purely to catch the OPTrans cast in the 'if' statement.
         }
+        return 1.0;
     }
 
     public void process() throws ParseException, IOException {
