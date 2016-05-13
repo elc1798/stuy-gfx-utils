@@ -1259,9 +1259,18 @@ The horizontal line will have $y_0 = y_1$, and will move upwards from $B$ to $T$
         some simple coordinate geometry and the line equation, we can see: \\
         \begin{center}
             $\Delta X_1 = \frac{X_T - X_B}{Y_T - Y_B}$ \\
-            $\Delta X_2 = \frac{X_M - X_B}{Y_M - Y_B}$
+            $\Delta X_2 = \frac{X_M - X_B}{Y_M - Y_B}$ on $\bar{BM}$ \\
+            $\Delta X_2 = \frac{X_T - X_M}{Y_T - Y_M}$ on $\bar{MT}$
         \end{center}
 \end{enumerate}
+
+However, these $\Delta$ values are floating point values. This is not very convenient
+for us, since we want to use integers for pixel locations. Another issue is division
+by 0. We will always have a ``true'' top point and a ``true'' bottom point, but the
+middle point may lie on the same horizontal as $B$ or $T$, which causes the
+denominator being 0. We could simple add checks beforehand, use division by 0 =
+infinity, and division by infinity = 0 hackery, or any other such solution.
+Preventing this is trivial.
 
 \end{document}
 
