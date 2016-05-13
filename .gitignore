@@ -80,3 +80,8 @@ ehthumbs.db
 *.ppm
 *.png
 
+# Latex Files
+*.aux
+*.log
+*.toc
+
