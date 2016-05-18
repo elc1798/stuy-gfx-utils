@@ -1272,5 +1272,27 @@ denominator being 0. We could simple add checks beforehand, use division by 0 =
 infinity, and division by infinity = 0 hackery, or any other such solution.
 Preventing this is trivial.
 
+\section{May 18, 2016 - Z Buffering}
+
+Now that we are filling in faces, if we try multiple figures, some pixels might be
+overwritten. We can solve this ``overlapping'' problem using the z-buffering
+technique.
+
+In Z Buffering, we track a 2D array with the same dimensions as our canvas. Each
+index stores a floating point value that represents a Z coordinate. We should ONLY
+draw things with greater Z coordinate values than those that currently exist. For
+example, drawing in index (250, 150), if we first draw a green pixel with Z value 23,
+it is drawn in index (250, 150) since there is nothing yet there. If we later try to
+draw a blue pixel at index (250, 150) with a Z value of 8, 8 is less than 23 so we do
+NOT draw it.
+
+As such, we should use \texttt{Double.MIN\_VALUE} as default values, as this is the
+least possible element in this Z buffer. To implement this in our current graphics
+engine, we need to change our \texttt{plot} function, \texttt{draw\_line} and
+\texttt{draw\_polygon} function. For example, if we need to draw faces, we should
+pass that boolean as a parameter to plot, so plot can track a Z buffer. This also
+requires passing a Z value to \texttt{draw\_line}. Anything else that uses
+\texttt{draw\_line} will also need to be modified.
+
 \end{document}
 
