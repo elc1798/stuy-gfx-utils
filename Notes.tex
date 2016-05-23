@@ -1294,5 +1294,53 @@ pass that boolean as a parameter to plot, so plot can track a Z buffer. This als
 requires passing a Z value to \texttt{draw\_line}. Anything else that uses
 \texttt{draw\_line} will also need to be modified.
 
+\section{May 23, 2016 - Modeling Real Lighting}
+
+Colors are calculated by looking at:
+
+\begin{enumerate}
+    \item The reflective properties of each object
+    \item The properties of the light hitting each object
+\end{enumerate}
+
+There is, of course, a standard lighting equation in computer graphics, derived after
+many years of computer graphics research:
+
+\begin{itemize}
+    \item We want this equation to generate a 3 number color code value for each
+        polygon / pixel.
+    \item If you want a grayscale image, you only need to calculate the color once
+        per polygon / pixel.
+    \item If you want a color image, you must calculate each separate color value for
+        red, gree, and blue for each polygon.
+\end{itemize}
+
+Let $I$ denote ``illumination''.
+
+\begin{center}
+    $I = I_{\text{ambient}} + I_{\text{diffuse}} + I_{\text{specular}}$
+\end{center}
+
+\textbf{Ambient}, \textbf{diffused}, and \textbf{specular} light are different kinds
+of reflected light.
+
+Ambient light is also known as \textit{background} light. Ambient light is more or
+less evenly distributed (it hits all objects equally).
+
+Another form of light source is \textbf{point light} or \textbf{spotlight} sources.
+These are lights that come from a specific point and are focused onto a particular
+area, being extremely intense in those areas, and extremely dim elsewhere. Their
+strength is therefore determined by an objects position away from the source.
+\textbf{Diffuse} lighting and \textbf{specular} lighting deals with point light
+sources.
+
+$I_{\text{ambient}}$: a combination of the color of ambient light and the amount and
+color that the object reflects.
+
+$I_{\text{diffuse}}$: Diffuse reflection reflects point lights back equally in all
+directions. It is based on the locations of the light and the object.
+
+$I_{\text{specular}}$: % TODO: To be continued next class
+
 \end{document}
 
