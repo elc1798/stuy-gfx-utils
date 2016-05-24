@@ -1325,7 +1325,7 @@ Let $I$ denote ``illumination''.
 of reflected light.
 
 Ambient light is also known as \textit{background} light. Ambient light is more or
-less evenly distributed (it hits all objects equally).
+less evenly distributed (it hits all objects equally), and comes from all directions.
 
 Another form of light source is \textbf{point light} or \textbf{spotlight} sources.
 These are lights that come from a specific point and are focused onto a particular
@@ -1340,7 +1340,34 @@ color that the object reflects.
 $I_{\text{diffuse}}$: Diffuse reflection reflects point lights back equally in all
 directions. It is based on the locations of the light and the object.
 
-$I_{\text{specular}}$: % TODO: To be continued next class
+$I_{\text{specular}}$: Comes from a point light source, and is reflected back at a
+specific direction. Thus we need to worry about what angle we are looking at the
+object as well.
+
+\subsection{Representing Illumination in Code}
+
+There are now 2 things that affect our code. \textbf{Quality of Light} and
+\textbf{Reflective Properties}.
+
+\subsubsection{Quality of Light}
+
+For an ambient light, we will represent the quality of light (color value) as a
+number between 0 and 255.
+
+For a point light, we need to represent it as a color value and a 3 dimensional
+point.
+
+\subsubsection{Reflective Properties}
+
+Represented as the percentage of light reflected back as constants:
+$k_{\text{ambient}}$, $k_{\text{diffuse}}$, and $k_{\text{specular}}$.
+
+This will also satisfy the relation:
+
+\begin{center}
+    $0 \leq k_a, k_d, k_s$ \\
+    $k_a + k_d + k_s = 1$
+\end{center}
 
 \end{document}
 
