@@ -1369,5 +1369,37 @@ This will also satisfy the relation:
     $k_a + k_d + k_s = 1$
 \end{center}
 
+\section{May 26, 2016: The Lighting Equation}
+
+\begin{center}
+    $I = I_{\text{ambient}} + I_{\text{diffuse}} + I_{\text{specular}}$
+\end{center}
+
+Ambient reflection requires us to have variables for:
+\begin{itemize}
+    \item Color value ($C_a$)
+    \item Constant of ambient reflection ($K_a$)
+\end{itemize}
+
+\begin{center}
+    $I_a = C_aK_a$
+\end{center}
+
+Diffuse reflection requires us to have variables for:
+\begin{itemize}
+    \item Color point source ($C_p$)
+    \item Constant of diffuse reflection ($K_d$)
+    \item The angle of incidence ($\theta$)
+\end{itemize}
+
+\begin{center}
+    $I_d = C_pK_d\cos\theta$
+\end{center}
+
+Note that $\vec{L}$ is the vector of incoming light, and $\vec{N}$ is the normal
+vector. $\vec{L}\cdot\vec{N} = \|\vec{L}\|\|\vec{N}\|\cos\theta$
+
+We will have to turn $\vec{L}$ and $\vec{N}$ into unit vectors via normalizing!
+
 \end{document}
 
