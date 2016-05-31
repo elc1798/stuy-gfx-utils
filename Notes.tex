@@ -1396,10 +1396,51 @@ Diffuse reflection requires us to have variables for:
     $I_d = C_pK_d\cos\theta$
 \end{center}
 
+In specular reflection, we have the vector of incoming light, the color of the point
+source, and the view angle. We also have the constant of specularity $K_s$.
+
 Note that $\vec{L}$ is the vector of incoming light, and $\vec{N}$ is the normal
 vector. $\vec{L}\cdot\vec{N} = \|\vec{L}\|\|\vec{N}\|\cos\theta$
 
 We will have to turn $\vec{L}$ and $\vec{N}$ into unit vectors via normalizing!
+
+There is one more thing we need to keep track of: the view vector: $\vec{V}$. Let
+$\alpha$ be the angle between $\vec{V}$ and the reflected ray $\vec{R}$. To find
+$\vec{R}$. We can project $\vec{L}$ onto $\vec{N}$ and then use that to create
+$\vec{R}$.
+
+Note that $\vec{L}$ and $\vec{N}$ are \textit{normalized}. Therefore their magnitudes
+are 1. We can use the relation:
+
+\begin{center}
+    $\vec{P} = \|\vec{N}\|\cos\theta = \|\vec{N}\|(\vec{L}\cdot\vec{N})$
+\end{center}
+
+Letting $\vec{S}$ be the perpendicular from $\vec{L}$ to $\vec{N}$, we know that
+$\vec{S} = \vec{N} ( \vec{L} \cdot \vec{N} ) - \vec{L}$, which we can plug into
+$\vec{R} = \vec{P} + \vec{S}$. Thus, $\vec{R} = 2 * \vec{P} - \vec{L}$.
+
+Using the dot product of $\vec{V}$ and $\vec{R}$ to get the angle $\alpha$ between
+them.
+
+\begin{center}
+    $I_s = C_pK_s\cos\alpha$
+\end{center}
+
+We can also raise the $\cos\alpha$ term to some power $n$ to tune the value.
+
+\subsection{Issues with calculating color values}
+
+Color values can become negative after it is computed! Basically turn everything less
+than 0 into 0. If a color value is higher than 255, then make it 255.
+
+\subsection{Shading Models}
+
+\begin{itemize}
+    \item Flat shading: Calculate $I$ once per polygon.
+    \item Goroud shading: vertex normals for each polygon. Combine surface normals of
+        all polygons that share a vertex
+\end{itemize}
 
 \end{document}
 
