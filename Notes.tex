@@ -1442,5 +1442,23 @@ than 0 into 0. If a color value is higher than 255, then make it 255.
         all polygons that share a vertex
 \end{itemize}
 
+\section{May 31, 2016 - Shading models}
+
+Gouraud, Goroud, whatever, shading involves:
+
+\begin{itemize}
+    \item Calculate $I$ once per vertex normal (normalized sum of the surface normals
+        that share a vertex).
+    \item Interpolate $I$ during scanline conversion and during drawing lines
+\end{itemize}
+
+In the Phong Shading model:
+
+\begin{itemize}
+    \item Calculate vertex normals
+    \item Interpolate the normal in scanline conversion and drawline
+    \item Recalculate $I$ for each PIXEL
+\end{itemize}
+
 \end{document}
 
