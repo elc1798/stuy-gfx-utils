@@ -155,4 +155,46 @@ public class Draw {
             }
         }
     }
+
+    private static void doScanlineConversion(Image pic, Point p0, Point p1, Point p2, Pixel color) {
+        Point tmp;
+        // Sort p0, p1, and p2 such that p0.y <= p1.y <= p2.y
+        // This is literally a max-3 step bubble sort written out
+        if (p0.compareTo(p1, 'y') > 0) {
+            tmp = p0;
+            p0 = p1;
+            p1 = tmp;
+        }
+        if (p0.compareTo(p2, 'y') > 0) {
+            tmp = p0;
+            p0 = p2;
+            p2 = tmp;
+        }
+        if (p1.compareTo(p2, 'y') > 0) {
+            tmp = p1;
+            p1 = p2;
+            p2 = tmp;
+        }
+        double x0 = p0.x;
+        double x1 = p0.x;
+        int y = p0.y;
+        double dx0 = ((double) p2.x - (double) p0.x) / (p2.y - p0.y);
+        double dx1 = ((double) p1.x - (double) p0.x) / (p1.y - p0.y);
+        int midY = p1.y;
+        while (y < midY) {
+            x0 += dx0;
+            x1 += dx1;
+            y++;
+            line(pic, color, new Point((int) x0, (int) y), new Point((int) x1, (int) y));
+        }
+        x1 = p1.x; // Ensure that x1 is set to the x-coor of the middle point
+        dx1 = ((double) p2.x - (double) p1.x) / (p2.y - p1.y);
+        int topY = p2.y;
+        while (y < topY) {
+            x0 += dx0;
+            x1 += dx1;
+            y++;
+            line(pic, color, new Point((int) x0, (int) y), new Point((int) x1, (int) y));
+        }
+    }
 }

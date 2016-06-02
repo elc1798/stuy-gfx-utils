@@ -52,4 +52,20 @@ public class Point {
     public Point clone() {
         return new Point(this.x, this.y, this.z);
     }
+
+    public int compareTo(Point pt, char axis) {
+        switch (axis) {
+            case 'x':
+            case 'X':
+                return this.x - pt.x;
+            case 'y':
+            case 'Y':
+                return this.y - pt.y;
+            case 'z':
+            case 'Z':
+                return this.z - pt.z;
+            default:
+                return 0;
+        }
+    }
 }
