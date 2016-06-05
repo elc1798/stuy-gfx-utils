@@ -3,7 +3,7 @@ package org.stuygfx.graphics;
 public class Draw {
 
     private static Point convert_to_octant_1(Point p, int octant) {
-        Point retval = new Point(p.x, p.y);
+        Point retval = new Point(p.x, p.y, p.z);
         switch (octant) {
             case 1:
                 retval.x = p.x;
@@ -45,7 +45,7 @@ public class Draw {
     }
 
     private static Point convert_from_octant_1(Point p, int octant) {
-        Point retval = new Point(p.x, p.y);
+        Point retval = new Point(p.x, p.y, p.z);
         switch (octant) {
             case 1:
                 retval.x = p.x;
@@ -112,8 +112,8 @@ public class Draw {
         int octant = get_octant(p1, p2);
 
         // We can "shift" p1 to (0, 0), and plot with an offset
-        Point p1_converted = convert_to_octant_1(new Point(p1.x, p1.y), octant);
-        Point p2_converted = convert_to_octant_1(new Point(p2.x, p2.y), octant);
+        Point p1_converted = convert_to_octant_1(new Point(p1.x, p1.y, p1.z), octant);
+        Point p2_converted = convert_to_octant_1(new Point(p2.x, p2.y, p2.z), octant);
         // Always plot from left to right (lower x to higher x) so we can use
         // the
         // same loop guard for all cases
@@ -124,19 +124,26 @@ public class Draw {
         }
         int x = p1_converted.x;
         int y = p1_converted.y;
+        double z = (double) p1_converted.z;
+
         int A = p2_converted.y - p1_converted.y;
         int B = -(p2_converted.x - p1_converted.x);
         int d = 2 * A + B;
+
+        double dz = ((double) (p2_converted.z - p1_converted.z)) / ((double) (p2_converted.y - p1_converted.y));
+
         while (x <= p2_converted.x) {
             // Convert the point to its original octant, and plot with p1 as the
             // origin
-            pic.plot(convert_from_octant_1(new Point(x, y), octant), color);
+            pic.plot(convert_from_octant_1(new Point(x, y, (int) z), octant), color);
             if (d > 0) {
                 y += 1;
                 d += 2 * B;
             }
             x += 1;
             d += 2 * A;
+
+            z += dz;
         }
     }
 
@@ -177,24 +184,36 @@ public class Draw {
         }
         double x0 = p0.x;
         double x1 = p0.x;
-        int y = p0.y;
         double dx0 = ((double) p2.x - (double) p0.x) / (p2.y - p0.y);
         double dx1 = ((double) p1.x - (double) p0.x) / (p1.y - p0.y);
+
+        int y = p0.y;
+
+        double z0 = p0.z;
+        double z1 = p0.z;
+        double dz0 = (p2.z - p0.z) / ((int) p2.y - (int) p0.y);
+        double dz1 = (p1.z - p0.z) / ((int) p1.y - (int) p0.y);
+
         int midY = p1.y;
         while (y < midY) {
             x0 += dx0;
             x1 += dx1;
             y++;
-            line(pic, color, new Point((int) x0, (int) y), new Point((int) x1, (int) y));
+            z0 += dz0;
+            z1 += dz1;
+            line(pic, color, new Point((int) x0, (int) y, (int) z0), new Point((int) x1, (int) y, (int) z1));
         }
+
         x1 = p1.x; // Ensure that x1 is set to the x-coor of the middle point
+        z1 = p1.z; // Ensure that z1 is set to the z-coor of the middle point
         dx1 = ((double) p2.x - (double) p1.x) / (p2.y - p1.y);
+
         int topY = p2.y;
         while (y < topY) {
             x0 += dx0;
             x1 += dx1;
             y++;
-            line(pic, color, new Point((int) x0, (int) y), new Point((int) x1, (int) y));
+            line(pic, color, new Point((int) x0, (int) y, (int) z0), new Point((int) x1, (int) y, (int) z1));
         }
     }
 }

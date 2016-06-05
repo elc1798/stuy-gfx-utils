@@ -8,6 +8,7 @@ public class Image {
     public int XRES;
     public int YRES;
     public Pixel[][] canvas;
+    public double[][] zBuffer;
 
     private int originX;
     private int originY;
@@ -20,6 +21,15 @@ public class Image {
         this.originY = 0;
         this.reflectOverX = false;
         this.canvas = new Pixel[YRES][XRES];
+        this.zBuffer = new double[YRES][XRES];
+
+        // Fill the zBuffer with the minimum double
+        for (int i = 0; i < zBuffer.length; i++) {
+            for (int j = 0; j < zBuffer[i].length; j++) {
+                zBuffer[i][j] = Double.NEGATIVE_INFINITY;
+            }
+        }
+
         initializeCanvas();
     }
 
@@ -67,22 +77,23 @@ public class Image {
     }
 
     public void plot(Point p, Pixel color) {
-        try {
-            if (reflectOverX) {
-                this.canvas[(this.YRES - 1) - (p.y + originY)][p.x + originX] = color;
-            } else {
-                this.canvas[p.y + originY][p.x + originX] = color;
-            }
-        } catch (IndexOutOfBoundsException e) {
-        }
+        plot(p.x, p.y, p.z, color);
     }
 
     public void plot(int x, int y, Pixel color) {
+        plot(x, y, 0, color);
+    }
+
+    public void plot(int x, int y, int z, Pixel color) {
         try {
+            int convertedY = y + originY;
+            int convertedX = x + originX;
             if (reflectOverX) {
-                this.canvas[(this.YRES - 1) - (y + originY)][x + originX] = color;
-            } else {
-                this.canvas[y + originY][x + originX] = color;
+                convertedY = (this.YRES - 1) - (y + originY);
+            }
+            if (z > zBuffer[convertedY][convertedX]) {
+                this.canvas[convertedY][convertedX] = color;
+                this.zBuffer[convertedY][convertedX] = z;
             }
         } catch (IndexOutOfBoundsException e) {
         }
