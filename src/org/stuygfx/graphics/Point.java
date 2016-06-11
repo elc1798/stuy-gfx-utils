@@ -4,17 +4,17 @@ import org.stuygfx.math.Matrix;
 
 public class Point {
 
-    public int x;
-    public int y;
-    public int z;
+    public double x;
+    public double y;
+    public double z;
 
-    public Point(int x, int y) {
+    public Point(double x, double y) {
         this.x = x;
         this.y = y;
         this.z = 0;
     }
 
-    public Point(int x, int y, int z) {
+    public Point(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -57,13 +57,13 @@ public class Point {
         switch (axis) {
             case 'x':
             case 'X':
-                return this.x - pt.x;
+                return (int) (this.x - pt.x);
             case 'y':
             case 'Y':
-                return this.y - pt.y;
+                return (int) (this.y - pt.y);
             case 'z':
             case 'Z':
-                return this.z - pt.z;
+                return (int) (this.z - pt.z);
             default:
                 return 0;
         }

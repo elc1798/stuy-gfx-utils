@@ -23,14 +23,7 @@ public class Image {
         this.canvas = new Pixel[YRES][XRES];
         this.zBuffer = new double[YRES][XRES];
 
-        // Fill the zBuffer with the minimum double
-        for (int i = 0; i < zBuffer.length; i++) {
-            for (int j = 0; j < zBuffer[i].length; j++) {
-                zBuffer[i][j] = Double.NEGATIVE_INFINITY;
-            }
-        }
-
-        initializeCanvas();
+        resetCanvas();
     }
 
     public Image(int xres, int yres) {
@@ -40,28 +33,30 @@ public class Image {
         this.originY = 0;
         this.reflectOverX = false;
         this.canvas = new Pixel[YRES][XRES];
-        initializeCanvas();
-    }
-
-    public void initializeCanvas() {
-        for (int i = 0; i < this.canvas.length; i++) {
-            for (int j = 0; j < this.canvas[0].length; j++) {
-                this.canvas[i][j] = new Pixel();
-            }
-        }
+        resetCanvas();
     }
 
     public void resetCanvas() {
         for (int i = 0; i < this.canvas.length; i++) {
             for (int j = 0; j < this.canvas[0].length; j++) {
-                this.canvas[i][j].set(0, 0, 0);
+                if (this.canvas[i][j] == null) {
+                    this.canvas[i][j] = new Pixel();
+                } else {
+                    this.canvas[i][j].set(0, 0, 0); // We can save a bit of memory by using set without creating a new instance
+                }
+            }
+        }
+
+        for (int i = 0; i < zBuffer.length; i++) {
+            for (int j = 0; j < zBuffer[i].length; j++) {
+                this.zBuffer[i][j] = Double.NEGATIVE_INFINITY;
             }
         }
     }
 
     public void setOrigin(Point origin) {
-        this.originX = origin.x;
-        this.originY = origin.y;
+        this.originX = (int) origin.x;
+        this.originY = (int) origin.y;
     }
 
     public void setOriginX(int x) {
@@ -84,12 +79,12 @@ public class Image {
         plot(x, y, 0, color);
     }
 
-    public void plot(int x, int y, int z, Pixel color) {
+    public void plot(double x, double y, double z, Pixel color) {
         try {
-            int convertedY = y + originY;
-            int convertedX = x + originX;
+            int convertedY = (int) y + originY;
+            int convertedX = (int) x + originX;
             if (reflectOverX) {
-                convertedY = (this.YRES - 1) - (y + originY);
+                convertedY = (this.YRES - 1) - ((int) y + originY);
             }
             if (z > zBuffer[convertedY][convertedX]) {
                 this.canvas[convertedY][convertedX] = color;

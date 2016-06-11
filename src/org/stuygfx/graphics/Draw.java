@@ -87,8 +87,8 @@ public class Draw {
     }
 
     private static int get_octant(Point start, Point end) {
-        int rise = end.y - start.y;
-        int run = end.x - start.x;
+        int rise = (int) (end.y - start.y);
+        int run = (int) (end.x - start.x);
         boolean mirror = false;
         int octant = 0;
         if (run < 0) {
@@ -122,12 +122,12 @@ public class Draw {
             p1_converted = p2_converted;
             p2_converted = tmp;
         }
-        int x = p1_converted.x;
-        int y = p1_converted.y;
+        int x = (int) p1_converted.x;
+        int y = (int) p1_converted.y;
         double z = (double) p1_converted.z;
 
-        int A = p2_converted.y - p1_converted.y;
-        int B = -(p2_converted.x - p1_converted.x);
+        int A = (int) (p2_converted.y - p1_converted.y);
+        int B = (int) (-(p2_converted.x - p1_converted.x));
         int d = 2 * A + B;
 
         double dz = ((double) (p2_converted.z - p1_converted.z)) / ((double) (p2_converted.y - p1_converted.y));
@@ -187,14 +187,14 @@ public class Draw {
         double dx0 = ((double) p2.x - (double) p0.x) / (p2.y - p0.y);
         double dx1 = ((double) p1.x - (double) p0.x) / (p1.y - p0.y);
 
-        int y = p0.y;
+        int y = (int) p0.y;
 
         double z0 = p0.z;
         double z1 = p0.z;
         double dz0 = (p2.z - p0.z) / ((int) p2.y - (int) p0.y);
         double dz1 = (p1.z - p0.z) / ((int) p1.y - (int) p0.y);
 
-        int midY = p1.y;
+        int midY = (int) p1.y;
         while (y < midY) {
             x0 += dx0;
             x1 += dx1;
@@ -208,7 +208,7 @@ public class Draw {
         z1 = p1.z; // Ensure that z1 is set to the z-coor of the middle point
         dx1 = ((double) p2.x - (double) p1.x) / (p2.y - p1.y);
 
-        int topY = p2.y;
+        int topY = (int) p2.y;
         while (y < topY) {
             x0 += dx0;
             x1 += dx1;

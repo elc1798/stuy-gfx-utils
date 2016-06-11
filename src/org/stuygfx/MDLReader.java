@@ -215,7 +215,7 @@ public class MDLReader {
                 for (int frame = start; frame <= end; frame++) {
                     knobValues[frame] = startVal;
                     // Add rate of change:
-                    startVal += (endVal - startVal) / (end - start + 1);
+                    startVal += (endVal - startVal) / ((double) end - (double) start + 1);
                 }
 
                 knobs.put(((OPVary) opc).getKnob(), knobValues);
