@@ -282,13 +282,13 @@ public class MDLReader {
                 OPAmbient opa = (OPAmbient) opc;
                 if (ambient != null) {
                     printWarning("Redfined ambient light!");
-                    double[] rgb = opa.getRgb();
-                    ambient = new AmbientSource(new Pixel(
-                            (int) rgb[0],
-                            (int) rgb[1],
-                            (int) rgb[2]
-                    ));
                 }
+                double[] rgb = opa.getRgb();
+                ambient = new AmbientSource(new Pixel(
+                        (int) rgb[0],
+                        (int) rgb[1],
+                        (int) rgb[2]
+                ));
             }
         }
     }
@@ -368,10 +368,9 @@ public class MDLReader {
                     double dz = dim[2];
 
                     pm.addRectPrism((int) x, (int) y, (int) z, (int) dx, (int) dy, (int) dz);
-                    if (opb.getConstants() == null) {
-                        constants.add(null);
-                    } else {
-                        constants.add(lightConstants.get(opb.getConstants()));
+                    if (opb.getConstants() != null) {
+                        Transformations.applyTransformation(origins.peek(), pm);
+                        Draw.polygonMatrix(canvas, pm, ambient, lightConstants.get(opb.getConstants()), lights.values());
                     }
                 } else if (opc instanceof OPSphere) {
                     OPSphere ops = (OPSphere) opc;
@@ -383,10 +382,9 @@ public class MDLReader {
                     double radius = ops.getRadius();
 
                     pm.addSphere(cx, cy, cz, radius);
-                    if (ops.getConstants() == null) {
-                        constants.add(null);
-                    } else {
-                        constants.add(lightConstants.get(ops.getConstants()));
+                    if (ops.getConstants() != null) {
+                        Transformations.applyTransformation(origins.peek(), pm);
+                        Draw.polygonMatrix(canvas, pm, ambient, lightConstants.get(ops.getConstants()), lights.values());
                     }
                 } else if (opc instanceof OPTorus) {
                     OPTorus opt = (OPTorus) opc;
@@ -399,10 +397,9 @@ public class MDLReader {
                     double crossSectionRadius = opt.getCrossSectionRadius();
 
                     pm.addTorus(cx, cy, cz, outerRadius, crossSectionRadius);
-                    if (opt.getConstants() == null) {
-                        constants.add(null);
-                    } else {
-                        constants.add(lightConstants.get(opt.getConstants()));
+                    if (opt.getConstants() != null) {
+                        Transformations.applyTransformation(origins.peek(), pm);
+                        Draw.polygonMatrix(canvas, pm, ambient, lightConstants.get(opt.getConstants()), lights.values());
                     }
                 } else if (opc instanceof OPLine) {
                     double[] start = ((OPLine) opc).getP1();
@@ -449,10 +446,9 @@ public class MDLReader {
                 Transformations.applyTransformation(origins.peek(), em);
                 Transformations.applyTransformation(origins.peek(), pm);
                 // Draw
+                // System.out.println(ambient);
                 if (ambient == null) {
                     Draw.polygonMatrix(canvas, new Pixel(255, 20, 255), pm);
-                } else {
-                    Draw.polygonMatrix(canvas, pm, ambient, constants, lights.values());
                 }
                 Draw.edgeMatrix(canvas, new Pixel(255, 0, 0), em);
                 // Empty

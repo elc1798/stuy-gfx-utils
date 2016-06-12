@@ -31,4 +31,9 @@ public class Pixel {
     public int[] toArrayOfInts() {
         return new int[] { this.r, this.g, this.b };
     }
+
+    @Override
+    public String toString() {
+        return "[" + this.r + " , " + this.g + " , " + this.b + "]";
+    }
 }

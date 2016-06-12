@@ -8,4 +8,9 @@ public class AmbientSource {
     public AmbientSource(Pixel color) {
         this.color = color;
     }
+
+    @Override
+    public String toString() {
+        return "AMBIENT [ " + color + " ]";
+    }
 }

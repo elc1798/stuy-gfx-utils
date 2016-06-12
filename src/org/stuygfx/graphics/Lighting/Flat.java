@@ -1,5 +1,6 @@
 package org.stuygfx.graphics.Lighting;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.stuygfx.graphics.Pixel;
@@ -79,6 +80,8 @@ public class Flat {
                 pointsource[i] += diffuse[i] + specular[i];
             }
         }
+        System.out.println("AMBIENT: " + Arrays.toString(ambient));
+        System.out.println("POINTSOURCE: " + Arrays.toString(pointsource));
         return new Pixel((int) Math.min(ambient[0] + pointsource[0], 255.0),
                 (int) Math.min(ambient[1] + pointsource[1], 255.0), (int) Math.min(ambient[2] + pointsource[2], 255.0));
     }

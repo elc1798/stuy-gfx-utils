@@ -22,6 +22,15 @@ public class Matrix {
         return data[0].length;
     }
 
+    @Override
+    public String toString() {
+        String retval = "";
+        for (int i = 0; i < data.length; i++) {
+            retval += Arrays.toString(data[i]) + "\n";
+        }
+        return retval;
+    }
+    
     public void print() {
         for (int i = 0; i < data.length; i++) {
             System.out.println(Arrays.toString(data[i]));

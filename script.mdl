@@ -6,10 +6,10 @@ rotate y 360 spinny
 rotate x 45
 push
 move 250 250 0
-box -50 -50 -50 100 100 100
-sphere 0 0 0 225
-sphere 0 0 0 50
-sphere 0 0 0 170
+sphere sphere1 0 0 0 225
 vary spinny 0 49 0 1
 vary bigenator 0 49 0 1
+ambient 25 25 225
+light light1 100 25 25 -100 -100 -100
+constants sphere1 1 1 1 1 1 1 1 1 1 0 0 0
 display
