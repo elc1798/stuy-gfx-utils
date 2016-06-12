@@ -1,5 +1,11 @@
 package org.stuygfx.graphics;
 
+import java.util.ArrayList;
+
+import org.stuygfx.graphics.Lighting.Flat;
+import org.stuygfx.graphics.Lighting.PointSource;
+import org.stuygfx.math.Matrix;
+
 public class Draw {
 
     private static Point convert_to_octant_1(Point p, int octant) {
@@ -155,10 +161,18 @@ public class Draw {
 
     public static void polygonMatrix(Image pic, Pixel color, PolygonMatrix pm) {
         for (Triangle t : pm.polygons) {
-            if (t.shouldDraw()) {
+            if (t.isVisible()) {
                 line(pic, color, t.p1, t.p2);
                 line(pic, color, t.p1, t.p3);
                 line(pic, color, t.p2, t.p3);
+            }
+        }
+    }
+    
+    public static void polygonMatrix(Image pic, PolygonMatrix pm, double[] ambient, Matrix constants, ArrayList<PointSource> lights) {
+        for (Triangle t : pm.polygons) {
+            if (t.isVisible()) {
+                // TODO: Pixel color = Flat.applyShading
             }
         }
     }

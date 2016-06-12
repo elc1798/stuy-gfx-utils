@@ -28,15 +28,19 @@ public class Triangle {
      * 
      * @return true if 90 <= theta <= 270
      */
-    public boolean shouldDraw() {
-        Matrix N = new Matrix(new double[][] {
+    public boolean isVisible() {
+        Matrix N = getSurfaceNormal();
+        double cosTheta = MatrixMath.dotProduct(N, DEFAULT_VIEW_VEC) / MatrixMath.magnitude(N);
+        return cosTheta <= 0.0;
+    }
+
+    public Matrix getSurfaceNormal() {
+        return new Matrix(new double[][] {
             {
                 (p2.y - p1.y) * (p3.z - p1.z) - (p2.z - p1.z) * (p3.y - p1.y),
                 (p2.z - p1.z) * (p3.x - p1.x) - (p2.x - p1.x) * (p3.z - p1.z),
                 (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x)
             }
         });
-        double cosTheta = MatrixMath.dotProduct(N, DEFAULT_VIEW_VEC) / MatrixMath.magnitude(N);
-        return cosTheta <= 0.0;
     }
 }

@@ -23,4 +23,12 @@ public class Pixel {
         this.g = g;
         this.b = b;
     }
+
+    public double[] toArrayOfDoubles() {
+        return new double[] { (double) this.r, (double) this.g, (double) this.b };
+    }
+
+    public int[] toArrayOfInts() {
+        return new int[] { this.r, this.g, this.b };
+    }
 }

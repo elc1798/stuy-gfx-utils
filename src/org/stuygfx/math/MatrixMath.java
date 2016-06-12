@@ -40,18 +40,24 @@ public class MatrixMath {
         return crossProduct(m1.data, m2.data);
     }
 
-    public static void scalarMultiplyInPlace(Matrix m, int factor) {
-        for (int i = 0; i < m.rows(); i++) {
-            int j;
-            for (j = 0; j < m.cols(); j++) {
-                m.data[i][j] *= factor;
+    public static Matrix scalarMultiply(Matrix m, double factor) {
+        Matrix clone = m.clone();
+        for (int i = 0; i < clone.rows(); i++) {
+            for (int j = 0; j < clone.cols(); j++) {
+                clone.data[i][j] *= factor;
             }
         }
+        return clone;
     }
 
-    public static Matrix scalarMultiply(Matrix m, int factor) {
-        Matrix clone = m.clone();
-        scalarMultiplyInPlace(clone, factor);
+    public static Matrix subtract(Matrix m1, Matrix m2) {
+        assert (m1.rows() == m2.rows() && m1.cols() == m2.cols());
+        Matrix clone = m1.clone();
+        for (int i = 0; i < clone.rows(); i++) {
+            for (int j = 0; j < clone.cols(); j++) {
+                clone.data[i][j] -= m2.data[i][j];
+            }
+        }
         return clone;
     }
 
@@ -72,5 +78,15 @@ public class MatrixMath {
             sum += d * d;
         }
         return Math.sqrt(sum);
+    }
+
+    public static Matrix normalize(Matrix vec) {
+        assert (vec.rows() == 1);
+        Matrix normalized = vec.clone();
+        double magnitude = magnitude(vec);
+        for (int i = 0; i < normalized.data[0].length; i++) {
+            normalized.data[0][i] = normalized.data[0][i] / magnitude;
+        }
+        return normalized;
     }
 }
