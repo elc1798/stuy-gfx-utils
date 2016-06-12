@@ -1,6 +1,6 @@
 package org.stuygfx.graphics.Lighting;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
 import org.stuygfx.graphics.Pixel;
 import org.stuygfx.graphics.Triangle;
@@ -68,7 +68,7 @@ public class Flat {
      *            - Vector for the camera
      * @return - A Pixel containing the color calculated by flat shading
      */
-    public static Pixel applyShading(Triangle face, AmbientSource ambientLight, ArrayList<PointSource> lights,
+    public static Pixel applyShading(Triangle face, AmbientSource ambientLight, Collection<PointSource> lights,
             double[] K_a, double[] K_d, double[] K_s, Matrix viewVector) {
         double[] ambient = ambient(ambientLight, K_a);
         double[] pointsource = new double[] { 0.0, 0.0, 0.0 };

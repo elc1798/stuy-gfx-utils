@@ -47,13 +47,19 @@ import org.stuygfx.graphics.Pixel;
 import org.stuygfx.graphics.Point;
 import org.stuygfx.graphics.PolygonMatrix;
 import org.stuygfx.graphics.TransformationStack;
+import org.stuygfx.graphics.Lighting.AmbientSource;
+import org.stuygfx.graphics.Lighting.PointSource;
+import org.stuygfx.math.Matrix;
 import org.stuygfx.math.Transformations;
 import org.stuygfx.parser.ParseException;
+import org.stuygfx.parser.tables.OPAmbient;
 import org.stuygfx.parser.tables.OPBasename;
 import org.stuygfx.parser.tables.OPBox;
 import org.stuygfx.parser.tables.OPCode;
+import org.stuygfx.parser.tables.OPConstants;
 import org.stuygfx.parser.tables.OPDisplay;
 import org.stuygfx.parser.tables.OPFrames;
+import org.stuygfx.parser.tables.OPLight;
 import org.stuygfx.parser.tables.OPLine;
 import org.stuygfx.parser.tables.OPMove;
 import org.stuygfx.parser.tables.OPPop;
@@ -85,6 +91,11 @@ public class MDLReader {
     private int numFrames;
     private Hashtable<String, Double[]> knobs;
 
+    // For lighting
+    private AmbientSource ambient;
+    private Hashtable<String, PointSource> lights;
+    private Hashtable<String, Matrix> lightConstants;
+
     public MDLReader(ArrayList<OPCode> o, SymbolTable s) {
         opcodes = o;
         symbols = s;
@@ -100,6 +111,10 @@ public class MDLReader {
         isAnimated = false;
         numFrames = -1;
         knobs = new Hashtable<String, Double[]>();
+
+        ambient = null;
+        lights = new Hashtable<String, PointSource>();
+        lightConstants = new Hashtable<String, Matrix>();
     }
 
     /**
@@ -245,23 +260,55 @@ public class MDLReader {
         return 1.0;
     }
 
+    public void lightingPass() throws ParseException {
+        for (OPCode opc : opcodes) {
+            if (opc instanceof OPLight) {
+                OPLight opl = (OPLight) opc;
+                if (lights.containsKey(opl.getName())) {
+                    throwError("Cannot define light <" + opl.getName() + "> multiple times");
+                }
+                lights.put(opl.getName(), new PointSource(opl.getRgb(), opl.getLocation()));
+            } else if (opc instanceof OPConstants) {
+                OPConstants opconst = (OPConstants) opc;
+                if (lightConstants.containsKey(opconst.getName())) {
+                    printWarning("Redefined constant <" + opconst.getName() + ">!");
+                }
+                double[][] constants = new double[3][3];
+                constants[0] = opconst.getAmbient();
+                constants[1] = opconst.getDiffuse();
+                constants[2] = opconst.getSpecular();
+                lightConstants.put(opconst.getName(), new Matrix(constants));
+            } else if (opc instanceof OPAmbient) {
+                OPAmbient opa = (OPAmbient) opc;
+                if (ambient != null) {
+                    printWarning("Redfined ambient light!");
+                    double[] rgb = opa.getRgb();
+                    ambient = new AmbientSource(new Pixel(
+                            (int) rgb[0],
+                            (int) rgb[1],
+                            (int) rgb[2]
+                    ));
+                }
+            }
+        }
+    }
+
     public void process() throws ParseException, IOException {
         process(false);
     }
 
     public void process(boolean debug) throws ParseException, IOException {
         animationPass();
+        lightingPass();
 
         for (int frame = 0; frame < numFrames; frame++) {
 
             System.out.printf("Rendering frame %d\n", frame);
 
-            Iterator<OPCode> i = opcodes.iterator();
-            OPCode opc;
             double timeStart = 0;
+            ArrayList<Matrix> constants = new ArrayList<Matrix>();
 
-            while (i.hasNext()) {
-                opc = (OPCode) i.next();
+            for (OPCode opc : opcodes) {
 
                 if (debug) {
                     System.out.println("============== BEGIN OPERATION =============");
@@ -321,6 +368,11 @@ public class MDLReader {
                     double dz = dim[2];
 
                     pm.addRectPrism((int) x, (int) y, (int) z, (int) dx, (int) dy, (int) dz);
+                    if (opb.getConstants() == null) {
+                        constants.add(null);
+                    } else {
+                        constants.add(lightConstants.get(opb.getConstants()));
+                    }
                 } else if (opc instanceof OPSphere) {
                     OPSphere ops = (OPSphere) opc;
                     double[] center = ops.getCenter();
@@ -331,6 +383,11 @@ public class MDLReader {
                     double radius = ops.getRadius();
 
                     pm.addSphere(cx, cy, cz, radius);
+                    if (ops.getConstants() == null) {
+                        constants.add(null);
+                    } else {
+                        constants.add(lightConstants.get(ops.getConstants()));
+                    }
                 } else if (opc instanceof OPTorus) {
                     OPTorus opt = (OPTorus) opc;
                     double[] center = opt.getCenter();
@@ -342,6 +399,11 @@ public class MDLReader {
                     double crossSectionRadius = opt.getCrossSectionRadius();
 
                     pm.addTorus(cx, cy, cz, outerRadius, crossSectionRadius);
+                    if (opt.getConstants() == null) {
+                        constants.add(null);
+                    } else {
+                        constants.add(lightConstants.get(opt.getConstants()));
+                    }
                 } else if (opc instanceof OPLine) {
                     double[] start = ((OPLine) opc).getP1();
                     double x0 = start[0];
@@ -387,7 +449,11 @@ public class MDLReader {
                 Transformations.applyTransformation(origins.peek(), em);
                 Transformations.applyTransformation(origins.peek(), pm);
                 // Draw
-                Draw.polygonMatrix(canvas, new Pixel(255, 20, 255), pm);
+                if (ambient == null) {
+                    Draw.polygonMatrix(canvas, new Pixel(255, 20, 255), pm);
+                } else {
+                    Draw.polygonMatrix(canvas, pm, ambient, constants, lights.values());
+                }
                 Draw.edgeMatrix(canvas, new Pixel(255, 0, 0), em);
                 // Empty
                 em.empty();

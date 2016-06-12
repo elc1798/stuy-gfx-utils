@@ -3,6 +3,7 @@ package org.stuygfx.graphics;
 import static org.stuygfx.CONSTANTS.DEFAULT_VIEW_VEC;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.stuygfx.graphics.Lighting.AmbientSource;
 import org.stuygfx.graphics.Lighting.Flat;
@@ -172,10 +173,13 @@ public class Draw {
         }
     }
 
-    public static void polygonMatrix(Image pic, PolygonMatrix pm, AmbientSource ambience, Matrix constants, ArrayList<PointSource> lights) {
-        for (Triangle t : pm.polygons) {
+    public static void polygonMatrix(Image pic, PolygonMatrix pm, AmbientSource ambience, ArrayList<Matrix> constants, Collection<PointSource> lights) {
+        assert(pm.polygons.size() == constants.size());
+        for (int i = 0; i < pm.polygons.size(); i++) {
+            Triangle t = pm.polygons.get(i);
+            Matrix _constants = constants.get(i);
             if (t.isVisible()) {
-                Pixel color = Flat.applyShading(t, ambience, lights, constants.data[0], constants.data[1], constants.data[2], DEFAULT_VIEW_VEC);
+                Pixel color = Flat.applyShading(t, ambience, lights, _constants.data[0], _constants.data[1], _constants.data[2], DEFAULT_VIEW_VEC);
                 line(pic, color, t.p1, t.p2);
                 line(pic, color, t.p1, t.p3);
                 line(pic, color, t.p2, t.p3);
