@@ -23,3 +23,11 @@ If you wish to use another `.pgi` file (Procedurally Generated Image), do:
 $ java -jar StuyGFX.jar file.pgi
 ```
 
+## Features implemented
+
+- Flat shading
+- Importing Waveform OBJ files
+- ZBuffer
+- Backface culling
+- Animation
+
