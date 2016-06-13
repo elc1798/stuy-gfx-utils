@@ -32,7 +32,7 @@ public class Reader {
         this.filename = filename;
     }
 
-    public PolygonMatrix getFaces() {
+    public PolygonMatrix getFaces(int scale) {
         // A line in the form:
         // v <float> <float> <float>
         // specifies a vertex
@@ -52,11 +52,11 @@ public class Reader {
             if (currLine.startsWith("v ")) {
                 String[] line = currLine.split(" ");
                 vertices.add(new Point(
-                        Double.parseDouble(line[1]) * 100,
-                        Double.parseDouble(line[2]) * 100,
-                        Double.parseDouble(line[3]) * 100
+                        Double.parseDouble(line[1]) * scale,
+                        Double.parseDouble(line[2]) * scale,
+                        Double.parseDouble(line[3]) * scale
                 ));
-            } else if (currLine.equals("s off")) {
+            } else if (currLine.startsWith("s ")) {
                 break;
             }
         }

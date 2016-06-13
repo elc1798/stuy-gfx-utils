@@ -16,6 +16,8 @@ interpreter: StuyGFX.jar
 runBasic: StuyGFX.jar
 	@java -jar StuyGFX.jar script.mdl
 
-run: StuyGFX.jar
+runMonkey: StuyGFX.jar
 	java -jar StuyGFX.jar monkeylights.mdl $(CURDIR)/monkey.obj
 
+run: StuyGFX.jar
+	java -jar StuyGFX.jar humanlights.mdl $(CURDIR)/human.obj 40

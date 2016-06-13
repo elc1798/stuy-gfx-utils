@@ -75,10 +75,14 @@ public class Main {
         PolygonMatrix fromWaveFront = null;
 
         String filename;
-        if (args.length == 2) {
+        if (args.length == 3) {
             filename = args[0];
             Reader wavefrontFile = new Reader(args[1]);
-            fromWaveFront = wavefrontFile.getFaces();
+            fromWaveFront = wavefrontFile.getFaces(Integer.parseInt(args[2]));
+        } else if (args.length == 2) {
+            filename = args[0];
+            Reader wavefrontFile = new Reader(args[1]);
+            fromWaveFront = wavefrontFile.getFaces(100);
         } else if (args.length == 1) {
             filename = args[0];
         } else {
