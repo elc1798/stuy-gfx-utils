@@ -6,6 +6,10 @@ help:
 	@echo "    ant >= 1.7"
 	@echo "    javac >= 1.7"
 	@echo "    java >= 1.7"
+	@echo "Other 'make' options:"
+	@echo "    runBasic"
+	@echo "    monkey"
+	@echo "    human"
 
 recompile: build.xml jar-in-jar-loader.zip
 	@ant
@@ -16,8 +20,11 @@ interpreter: StuyGFX.jar
 runBasic: StuyGFX.jar
 	@java -jar StuyGFX.jar script.mdl
 
-runMonkey: StuyGFX.jar
+monkey: StuyGFX.jar
 	java -jar StuyGFX.jar monkeylights.mdl $(CURDIR)/monkey.obj
 
-run: StuyGFX.jar
+human: StuyGFX.jar
 	java -jar StuyGFX.jar humanlights.mdl $(CURDIR)/human.obj 40
+
+run: StuyGFX.jar
+	java -jar StuyGFX.jar dronelights.mdl $(CURDIR)/Drone.obj 50
