@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.stuygfx.graphics.Draw;
@@ -82,6 +81,7 @@ public class MDLReader {
     private Image canvas;
     private EdgeMatrix em;
     private PolygonMatrix pm;
+    private PolygonMatrix importedMesh;
 
     private String basename;
     private String formatString;
@@ -105,6 +105,29 @@ public class MDLReader {
         canvas.shouldRelectOverX(true);
         em = new EdgeMatrix();
         pm = new PolygonMatrix();
+        this.importedMesh = new PolygonMatrix();
+        origins = new TransformationStack();
+
+        basename = "";
+        isAnimated = false;
+        numFrames = -1;
+        knobs = new Hashtable<String, Double[]>();
+
+        ambient = null;
+        lights = new Hashtable<String, PointSource>();
+        lightConstants = new Hashtable<String, Matrix>();
+    }
+
+    public MDLReader(ArrayList<OPCode> o, SymbolTable s, PolygonMatrix initialMesh) {
+        opcodes = o;
+        symbols = s;
+        symKeys = s.keySet();
+
+        canvas = new Image();
+        canvas.shouldRelectOverX(true);
+        em = new EdgeMatrix();
+        pm = new PolygonMatrix();
+        this.importedMesh = initialMesh;
         origins = new TransformationStack();
 
         basename = "";
@@ -221,18 +244,22 @@ public class MDLReader {
 
                 double startVal = ((OPVary) opc).getStartval();
                 double endVal = ((OPVary) opc).getEndval();
+                double original = startVal;
 
                 // Throw error if start frame is not within bounds
                 if (start < 0 || end >= numFrames) {
                     throwError("Frame start or end [" + ((OPVary) opc).getKnob() + "] is out of bounds");
                 }
 
+                System.out.println(start + " " + startVal);
+                System.out.println(end + " " + endVal);
                 for (int frame = start; frame <= end; frame++) {
                     knobValues[frame] = startVal;
                     // Add rate of change:
-                    startVal += (endVal - startVal) / ((double) end - (double) start + 1);
+                    startVal += (endVal - original) / ((double) end - (double) start);
                 }
-
+                System.out.println(knobValues.length);
+                System.out.println(Arrays.toString(knobValues));
                 knobs.put(((OPVary) opc).getKnob(), knobValues);
             }
         }
@@ -306,7 +333,6 @@ public class MDLReader {
             System.out.printf("Rendering frame %d\n", frame);
 
             double timeStart = 0;
-            ArrayList<Matrix> constants = new ArrayList<Matrix>();
 
             for (OPCode opc : opcodes) {
 
@@ -419,6 +445,14 @@ public class MDLReader {
                 } else if (opc instanceof OPDisplay) {
                     if (frame == numFrames - 1) { // Only run display upon the
                                                   // last frame
+                        System.out.println("Drawing imported mesh");
+                        PolygonMatrix clone = importedMesh.clone();
+                        Transformations.applyTransformation(origins.peek(), clone);
+                        Draw.polygonMatrix(canvas, clone, ambient, new Matrix(new double[][] {
+                            {1.0, 1.0, 1.0},
+                            {1.0, 1.0, 1.0},
+                            {1.0, 1.0, 1.0}
+                        }), lights.values());
                         try {
                             String command;
                             if (isAnimated) {
@@ -445,7 +479,7 @@ public class MDLReader {
 
                 Transformations.applyTransformation(origins.peek(), em);
                 Transformations.applyTransformation(origins.peek(), pm);
-                // Draw
+
                 // System.out.println(ambient);
                 if (ambient == null) {
                     Draw.polygonMatrix(canvas, new Pixel(255, 20, 255), pm);
@@ -462,6 +496,17 @@ public class MDLReader {
                 }
             }
 
+            // Draw the imported mesh
+            if (frame != numFrames - 1) {
+                PolygonMatrix clone = importedMesh.clone();
+                Transformations.applyTransformation(origins.peek(), clone);
+                Draw.polygonMatrix(canvas, clone, ambient, new Matrix(new double[][] {
+                    {1, 1, 1},
+                    {1, 1, 1},
+                    {1, 1, 1}
+                }), lights.values());
+            }
+
             if (isAnimated) {
                 String filename = String.format(formatString, frame);
                 save(filename);
@@ -469,6 +514,7 @@ public class MDLReader {
                 canvas.resetCanvas();
                 em.empty();
                 pm.empty();
+                pm = this.importedMesh.clone();
                 origins.reset();
             }
         }

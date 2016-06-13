@@ -1,5 +1,7 @@
 package org.stuygfx.wavefront;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -24,27 +26,29 @@ import org.stuygfx.graphics.PolygonMatrix;
  */
 public class Reader {
 
-    private Scanner fin;
+    private String filename;
 
     public Reader(String filename) {
-        fin = new Scanner(filename);
-    }
-
-    public void reset() {
-        fin.reset();
+        this.filename = filename;
     }
 
     public PolygonMatrix getFaces() {
         // A line in the form:
         // v <float> <float> <float>
         // specifies a vertex
-        reset();
+        Scanner fin = null;
+        try {
+            fin = new Scanner(new File(filename));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         String currLine = "";
         ArrayList<Point> vertices = new ArrayList<Point>();
-        
+
         PolygonMatrix pm = new PolygonMatrix();
-        while (fin.hasNextLine() && !currLine.startsWith("s ")) {
+        while (fin.hasNextLine()) {
             currLine = fin.nextLine();
+            // System.out.println(currLine);
             if (currLine.startsWith("v ")) {
                 String[] line = currLine.split(" ");
                 vertices.add(new Point(
@@ -52,20 +56,25 @@ public class Reader {
                         Double.parseDouble(line[2]) * 100,
                         Double.parseDouble(line[3]) * 100
                 ));
+            } else if (currLine.equals("s off")) {
+                break;
             }
         }
+        System.out.println("READ " + vertices.size() + " VERTICES FROM FILE");
         // A line 's off' separates vertices from faces
-        while(fin.hasNextLine()) {
+        while (fin.hasNextLine()) {
             currLine = fin.nextLine();
             if (currLine.startsWith("f ")) {
                 String[] line = currLine.split(" ");
                 pm.addTriangle(
-                    vertices.get(Integer.parseInt(line[1]) + 1),
-                    vertices.get(Integer.parseInt(line[2]) + 1),
-                    vertices.get(Integer.parseInt(line[3]) + 1)
+                    vertices.get(Integer.parseInt(line[1]) - 1),
+                    vertices.get(Integer.parseInt(line[2]) - 1),
+                    vertices.get(Integer.parseInt(line[3]) - 1)
                 );
             }
         }
+        fin.close();
+        System.out.println("READ " + pm.polygons.size() + " FACES FROM FILE");
         return pm;
     }
 }

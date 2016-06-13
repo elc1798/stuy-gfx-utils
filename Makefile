@@ -13,6 +13,9 @@ recompile: build.xml jar-in-jar-loader.zip
 interpreter: StuyGFX.jar
 	@java -jar StuyGFX.jar
 
-run: StuyGFX.jar
+runBasic: StuyGFX.jar
 	@java -jar StuyGFX.jar script.mdl
+
+run: StuyGFX.jar
+	java -jar StuyGFX.jar monkeylights.mdl $(CURDIR)/monkey.obj
 

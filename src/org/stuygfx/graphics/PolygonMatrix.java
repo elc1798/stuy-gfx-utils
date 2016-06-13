@@ -14,6 +14,10 @@ public class PolygonMatrix {
         polygons.clear();
     }
 
+    public void addTriangle(Triangle t) {
+        polygons.add(t.clone());
+    }
+
     public void addTriangle(Point p1, Point p2, Point p3) {
         polygons.add(new Triangle(p1, p2, p3));
     }
@@ -122,5 +126,13 @@ public class PolygonMatrix {
                 points[0].start.clone(),
                 points[n - 1 + (n - 1) * n].start.clone());
         }
+    }
+
+    public PolygonMatrix clone() {
+        PolygonMatrix clone = new PolygonMatrix();
+        for (Triangle t : polygons) {
+            clone.addTriangle(t);
+        }
+        return clone;
     }
 }

@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import org.stuygfx.graphics.PolygonMatrix;
 import org.stuygfx.parser.MDLParser;
 import org.stuygfx.parser.ParseException;
 import org.stuygfx.parser.tables.OPCode;
 import org.stuygfx.parser.tables.SymbolTable;
+import org.stuygfx.wavefront.Reader;
 
 public class Main {
 
@@ -70,9 +72,14 @@ public class Main {
         ArrayList<OPCode> opcodes;
         SymbolTable symTab;
         MDLParser parser;
+        PolygonMatrix fromWaveFront = null;
 
         String filename;
-        if (args.length == 1) {
+        if (args.length == 2) {
+            filename = args[0];
+            Reader wavefrontFile = new Reader(args[1]);
+            fromWaveFront = wavefrontFile.getFaces();
+        } else if (args.length == 1) {
             filename = args[0];
         } else {
             filename = "test.mdl";
@@ -88,7 +95,12 @@ public class Main {
         opcodes = parser.getOps();
         symTab = parser.getSymTab();
 
-        MDLReader mdlr = new MDLReader(opcodes, symTab);
+        MDLReader mdlr;
+        if (fromWaveFront == null) {
+            mdlr = new MDLReader(opcodes, symTab);
+        } else {
+            mdlr = new MDLReader(opcodes, symTab, fromWaveFront);
+        }
         mdlr.process();
     }
 }

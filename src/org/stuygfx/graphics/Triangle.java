@@ -43,4 +43,8 @@ public class Triangle {
             }
         });
     }
+
+    public Triangle clone() {
+        return new Triangle(this.p1.clone(), this.p2.clone(), this.p3.clone());
+    }
 }
