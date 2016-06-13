@@ -20,13 +20,14 @@ public class Flat {
 
     private static double[] diffuse(Triangle face, PointSource light, double[] constants) {
         assert (constants.length == 3);
-        Matrix surfaceNormal = face.getSurfaceNormal();
+        Matrix surfaceNormal = MatrixMath.normalize(face.getSurfaceNormal());
         Matrix lightVector = MatrixMath.normalize(light.lightVector);
         double diffuseAmount = MatrixMath.dotProduct(lightVector, surfaceNormal);
         double[] diffuse = light.color.toArrayOfDoubles();
         for (int i = 0; i < 3; i++) {
-            diffuse[i] = Math.max(diffuse[i] * constants[i] * diffuseAmount, 0.0);
+            diffuse[i] = Math.max(Math.abs(diffuse[i]) * constants[i] * diffuseAmount, 0.0);
         }
+        // System.out.println("DIFFUSE: " + Arrays.toString(diffuse));
         return diffuse;
     }
 
@@ -34,17 +35,18 @@ public class Flat {
         assert (constants.length == 3);
         Matrix surfaceNormal = MatrixMath.normalize(face.getSurfaceNormal());
         // Try to mimic a perfect reflector with n = infinity
-        double n = Math.round(Math.random() * 2 + 1);
+        double n = 1.0;
         Matrix lightVector = MatrixMath.normalize(light.lightVector);
 
         double dotprod = MatrixMath.dotProduct(lightVector, surfaceNormal);
-        Matrix reflectVector = MatrixMath.subtract(MatrixMath.scalarMultiply(surfaceNormal, 2 * dotprod), lightVector);
+        Matrix reflectVector = MatrixMath.subtract(lightVector, MatrixMath.scalarMultiply(surfaceNormal, 2 * dotprod));
         double specularAmount = Math.pow(MatrixMath.dotProduct(reflectVector, viewVector), n);
 
         double[] specular = light.color.toArrayOfDoubles();
         for (int i = 0; i < 3; i++) {
-            specular[i] = Math.max(specular[i] * constants[i] * specularAmount, 0.0);
+            specular[i] = Math.max(Math.abs(specular[i]) * constants[i] * specularAmount, 0.0);
         }
+        // System.out.println("SPECULAR: " + Arrays.toString(specular));
         return specular;
     }
 
@@ -80,8 +82,6 @@ public class Flat {
                 pointsource[i] += diffuse[i] + specular[i];
             }
         }
-        System.out.println("AMBIENT: " + Arrays.toString(ambient));
-        System.out.println("POINTSOURCE: " + Arrays.toString(pointsource));
         return new Pixel((int) Math.min(ambient[0] + pointsource[0], 255.0),
                 (int) Math.min(ambient[1] + pointsource[1], 255.0), (int) Math.min(ambient[2] + pointsource[2], 255.0));
     }
