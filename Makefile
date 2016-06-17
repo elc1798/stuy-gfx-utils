@@ -28,3 +28,16 @@ human: StuyGFX.jar
 
 run: StuyGFX.jar
 	java -jar StuyGFX.jar dronelights.mdl $(CURDIR)/Drone.obj 50
+
+runBasic7: StuyGFX-java7.jar
+	@java -jar StuyGFX-java7.jar script.mdl
+
+monkey7: StuyGFX-java7.jar
+	@java -jar StuyGFX-java7.jar script.mdl
+
+human7: StuyGFX-java7.jar
+	@java -jar StuyGFX-java7.jar script.mdl
+
+rnu7: StuyGFX-java7.jar
+	@java -jar StuyGFX-java7.jar script.mdl
+
